@@ -9,6 +9,7 @@
 #include <cstring>
 #include <expected>
 #include <span>
+#include <string>
 #include <variant>
 #include <vector>
 
@@ -21,6 +22,7 @@ inline constexpr std::size_t packetHeaderSize =
 enum class PacketType : std::uint8_t {
   Movement = 1,
   StateSnapshot = 2,
+  Chat = 3,
 };
 
 enum class Direction : std::uint8_t {
@@ -56,6 +58,11 @@ struct PlayerState {
 struct StateSnapshotPacket {
   PlayerId focusPlayer{};
   std::vector<PlayerState> players;
+};
+
+struct ChatPacket {
+  PlayerId player{};
+  std::string message;
 };
 
 enum class PacketError : std::uint8_t {
@@ -146,6 +153,7 @@ template <std::integral T>
   switch (decodedType) {
   case PacketType::Movement:
   case PacketType::StateSnapshot:
+  case PacketType::Chat:
     break;
   default:
     return std::unexpected(PacketError::UnknownType);
@@ -226,7 +234,7 @@ private:
     -> std::vector<std::byte> {
   constexpr std::size_t reservedBytes = 3;
   PayloadWriter writer;
-  writer.write<std::uint32_t>(packet.player);
+  writer.write<PlayerId>(packet.player);
   writer.writeByte(static_cast<std::uint8_t>(packet.direction));
   writer.writePadding(reservedBytes);
   return std::move(writer).release();
@@ -235,13 +243,23 @@ private:
 [[nodiscard]] inline auto encodePayload(const StateSnapshotPacket &packet)
     -> std::vector<std::byte> {
   PayloadWriter writer;
-  writer.write<std::uint32_t>(packet.focusPlayer);
+  writer.write<PlayerId>(packet.focusPlayer);
   writer.write<std::uint32_t>(
       static_cast<std::uint32_t>(packet.players.size()));
   for (const auto &entry : packet.players) {
     writer.write<std::uint32_t>(entry.player);
     writer.write<std::int32_t>(entry.position.x);
     writer.write<std::int32_t>(entry.position.y);
+  }
+  return std::move(writer).release();
+}
+
+[[nodiscard]] inline auto encodePayload(const ChatPacket &packet)
+    -> std::vector<std::byte> {
+  PayloadWriter writer;
+  writer.write<PlayerId>(packet.player);
+  for (char chr : packet.message) {
+    writer.writeByte(static_cast<std::uint8_t>(chr));
   }
   return std::move(writer).release();
 }
@@ -267,6 +285,22 @@ private:
   auto payload = encodePayload(packet);
   PacketHeader header{.version = protocolVersion,
                       .type = PacketType::StateSnapshot,
+                      .payloadSize =
+                          static_cast<std::uint32_t>(payload.size())};
+  auto headerBytes = encodeHeader(header);
+
+  std::vector<std::byte> buffer;
+  buffer.reserve(packetHeaderSize + payload.size());
+  buffer.insert(buffer.end(), headerBytes.begin(), headerBytes.end());
+  buffer.insert(buffer.end(), payload.begin(), payload.end());
+  return buffer;
+}
+
+[[nodiscard]] inline auto encode(const ChatPacket &packet)
+    -> std::vector<std::byte> {
+  auto payload = encodePayload(packet);
+  PacketHeader header{.version = protocolVersion,
+                      .type = PacketType::Chat,
                       .payloadSize =
                           static_cast<std::uint32_t>(payload.size())};
   auto headerBytes = encodeHeader(header);
@@ -352,7 +386,30 @@ decodeStateSnapshot(std::span<const std::byte> payload)
   return packet;
 }
 
-using PacketVariant = std::variant<MovementPacket, StateSnapshotPacket>;
+[[nodiscard]] inline auto decodeChat(std::span<const std::byte> payload)
+    -> PacketResult<ChatPacket> {
+  PayloadReader reader{payload};
+  auto playerId = reader.read<std::uint32_t>();
+  if (!playerId) {
+    return std::unexpected(playerId.error());
+  }
+
+  std::size_t messageLength = reader.remaining();
+  std::string message;
+  message.resize(messageLength);
+  for (std::size_t i = 0; i < messageLength; ++i) {
+    auto byteResult = reader.readByte();
+    if (!byteResult) {
+      return std::unexpected(byteResult.error());
+    }
+    message[i] = static_cast<char>(*byteResult);
+  }
+
+  return ChatPacket{.player = *playerId, .message = std::move(message)};
+}
+
+using PacketVariant =
+    std::variant<MovementPacket, StateSnapshotPacket, ChatPacket>;
 
 [[nodiscard]] inline auto decodePacket(const PacketHeader &header,
                                        std::span<const std::byte> payload)
@@ -371,6 +428,13 @@ using PacketVariant = std::variant<MovementPacket, StateSnapshotPacket>;
   }
   case PacketType::StateSnapshot: {
     auto packet = decodeStateSnapshot(payload);
+    if (!packet) {
+      return std::unexpected(packet.error());
+    }
+    return PacketVariant{*packet};
+  }
+  case PacketType::Chat: {
+    auto packet = decodeChat(payload);
     if (!packet) {
       return std::unexpected(packet.error());
     }

@@ -194,6 +194,9 @@ private:
                             [](const Protocol::StateSnapshotPacket &) {
                               // Clients should not send snapshots back to the
                               // server.
+                            },
+                            [&](const Protocol::ChatPacket &chat) {
+                              handleChat(session, chat);
                             }},
                  packetResult.value());
     }
@@ -229,6 +232,17 @@ private:
     if (updated) {
       broadcastState();
     }
+  }
+
+  void handleChat(const std::shared_ptr<Session> &session,
+                  const Protocol::ChatPacket &chat) {
+    if (chat.player != session->playerId) {
+      std::println("[server] ignoring spoofed chat for player {}",
+                   session->playerId);
+      return;
+    }
+
+    broadcastChat(chat);
   }
 
   static void logSocketError(std::string_view action,
@@ -281,6 +295,23 @@ private:
       if (auto result = recipient->send(std::span<const std::byte>{encoded});
           !result) {
         std::println("[server] broadcast failed for player {}: {}",
+                     recipient->playerId, result.error().message);
+        removePlayer(recipient->playerId);
+      }
+    }
+  }
+
+  void broadcastChat(const Protocol::ChatPacket &chat) {
+    auto encoded = Protocol::encode(chat);
+    auto recipients = snapshotSessions();
+
+    for (const auto &recipient : recipients) {
+      if (!recipient) {
+        continue;
+      }
+      if (auto result = recipient->send(std::span<const std::byte>{encoded});
+          !result) {
+        std::println("[server] chat broadcast failed for player {}: {}",
                      recipient->playerId, result.error().message);
         removePlayer(recipient->playerId);
       }
