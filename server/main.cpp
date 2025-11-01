@@ -21,9 +21,9 @@ namespace Protocol = Moonlapse::Protocol;
 
 namespace {
 
-constexpr std::uint16_t SERVER_PORT = 40500;
-constexpr int GRID_WIDTH = 40;
-constexpr int GRID_HEIGHT = 20;
+constexpr std::uint16_t serverPort = 40500;
+constexpr int gridWidth = 40;
+constexpr int gridHeight = 20;
 
 template <typename... Handlers> struct Overloaded : Handlers... {
   using Handlers::operator()...;
@@ -36,15 +36,15 @@ Overloaded(Handlers...) -> Overloaded<Handlers...>;
     -> std::string_view {
   using Protocol::PacketError;
   switch (error) {
-  case PacketError::VERSION_MISMATCH:
+  case PacketError::VersionMismatch:
     return "version mismatch";
-  case PacketError::UNKNOWN_TYPE:
+  case PacketError::UnknownType:
     return "unknown packet type";
-  case PacketError::TRUNCATED:
+  case PacketError::Truncated:
     return "truncated payload";
-  case PacketError::SIZE_MISMATCH:
+  case PacketError::SizeMismatch:
     return "size mismatch";
-  case PacketError::INVALID_PAYLOAD:
+  case PacketError::InvalidPayload:
     return "invalid payload";
   }
   return "unclassified error";
@@ -64,33 +64,33 @@ Overloaded(Handlers...) -> Overloaded<Handlers...>;
 void applyMovement(Protocol::Position &position,
                    Protocol::Direction direction) {
   switch (direction) {
-  case Protocol::Direction::UP:
+  case Protocol::Direction::Up:
     --position.y;
     break;
-  case Protocol::Direction::DOWN:
+  case Protocol::Direction::Down:
     ++position.y;
     break;
-  case Protocol::Direction::LEFT:
+  case Protocol::Direction::Left:
     --position.x;
     break;
-  case Protocol::Direction::RIGHT:
+  case Protocol::Direction::Right:
     ++position.x;
     break;
   }
 
-  position.x = clampCoordinate(position.x, GRID_WIDTH);
-  position.y = clampCoordinate(position.y, GRID_HEIGHT);
+  position.x = clampCoordinate(position.x, gridWidth);
+  position.y = clampCoordinate(position.y, gridHeight);
 }
 
 class GameServer {
 public:
   explicit GameServer(TcpListener listener) noexcept
-      : listener_{std::move(listener)} {}
+      : listener{std::move(listener)} {}
 
   void run() {
     std::println("[server] waiting for players...");
     while (true) {
-      auto connection = listener_.accept();
+      auto connection = listener.accept();
       if (!connection) {
         std::println("[server] accept failed: {}", connection.error().message);
         continue;
@@ -120,14 +120,14 @@ private:
   };
 
   void registerPlayer(TcpSocket socket) {
-    auto playerIdentifier = nextId_.fetch_add(1);
+    auto playerIdentifier = nextId.fetch_add(1);
     auto session =
         std::make_shared<Session>(playerIdentifier, std::move(socket));
     auto position = spawnPosition(playerIdentifier);
 
     {
-      std::scoped_lock guard{playersMutex_};
-      players_.emplace(playerIdentifier, PlayerEntry{position, session});
+      std::scoped_lock guard{playersMutex};
+      players.emplace(playerIdentifier, PlayerEntry{position, session});
     }
 
     std::println("[server] player {} connected at ({}, {})", playerIdentifier,
@@ -145,13 +145,13 @@ private:
 
     broadcastState();
 
-    workers_.emplace_back([this, session]() { handleClient(session); });
+    workers.emplace_back([this, session]() { handleClient(session); });
   }
 
   void handleClient(const std::shared_ptr<Session> &session) {
     while (true) {
       auto headerBytes =
-          session->socket.receiveExact(Protocol::PACKET_HEADER_SIZE);
+          session->socket.receiveExact(Protocol::packetHeaderSize);
       if (!headerBytes) {
         logSocketError("receive header", session->playerId,
                        headerBytes.error());
@@ -214,9 +214,9 @@ private:
 
     bool updated = false;
     {
-      std::scoped_lock guard{playersMutex_};
-      auto entry = players_.find(session->playerId);
-      if (entry == players_.end()) {
+      std::scoped_lock guard{playersMutex};
+      auto entry = players.find(session->playerId);
+      if (entry == players.end()) {
         return;
       }
       auto &position = entry->second.position;
@@ -233,7 +233,7 @@ private:
   static void logSocketError(std::string_view action,
                              Protocol::PlayerId playerIdentifier,
                              const SocketError &error) {
-    if (error.code == SocketErrorCode::CONNECTION_CLOSED) {
+    if (error.code == SocketErrorCode::ConnectionClosed) {
       std::println("[server] player {} closed the connection",
                    playerIdentifier);
       return;
@@ -248,9 +248,9 @@ private:
     Protocol::StateSnapshotPacket snapshot{};
     snapshot.focusPlayer = focus;
 
-    std::scoped_lock guard{playersMutex_};
-    snapshot.players.reserve(players_.size());
-    for (const auto &[playerIdentifier, entry] : players_) {
+    std::scoped_lock guard{playersMutex};
+    snapshot.players.reserve(players.size());
+    for (const auto &[playerIdentifier, entry] : players) {
       snapshot.players.emplace_back(
           Protocol::PlayerState{playerIdentifier, entry.position});
     }
@@ -260,9 +260,9 @@ private:
   [[nodiscard]] auto snapshotSessions() const
       -> std::vector<std::shared_ptr<Session>> {
     std::vector<std::shared_ptr<Session>> sessions;
-    std::scoped_lock guard{playersMutex_};
-    sessions.reserve(players_.size());
-    for (const auto &[playerIdentifier, entry] : players_) {
+    std::scoped_lock guard{playersMutex};
+    sessions.reserve(players.size());
+    for (const auto &[playerIdentifier, entry] : players) {
       sessions.push_back(entry.session);
     }
     return sessions;
@@ -296,13 +296,13 @@ private:
   void removePlayer(Protocol::PlayerId playerIdentifier) {
     std::shared_ptr<Session> removed;
     {
-      std::scoped_lock guard{playersMutex_};
-      auto entry = players_.find(playerIdentifier);
-      if (entry == players_.end()) {
+      std::scoped_lock guard{playersMutex};
+      auto entry = players.find(playerIdentifier);
+      if (entry == players.end()) {
         return;
       }
       removed = std::move(entry->second.session);
-      players_.erase(entry);
+      players.erase(entry);
     }
 
     if (removed) {
@@ -314,36 +314,36 @@ private:
   [[nodiscard]] static auto spawnPosition(Protocol::PlayerId playerIdentifier)
       -> Protocol::Position {
     auto positionIndex = static_cast<std::int32_t>(playerIdentifier - 1);
-    auto coordinateX = positionIndex % GRID_WIDTH;
-    auto coordinateY = (positionIndex / GRID_WIDTH) % GRID_HEIGHT;
+    auto coordinateX = positionIndex % gridWidth;
+    auto coordinateY = (positionIndex / gridWidth) % gridHeight;
     return Protocol::Position{coordinateX, coordinateY};
   }
 
-  TcpListener listener_;
-  std::atomic<Protocol::PlayerId> nextId_{1};
-  mutable std::mutex playersMutex_;
-  std::unordered_map<Protocol::PlayerId, PlayerEntry> players_;
-  std::vector<std::jthread> workers_;
+  TcpListener listener;
+  std::atomic<Protocol::PlayerId> nextId{1};
+  mutable std::mutex playersMutex;
+  std::unordered_map<Protocol::PlayerId, PlayerEntry> players;
+  std::vector<std::jthread> workers;
 };
 
 } // namespace
 
 auto main() -> int {
-  constexpr std::string_view LISTEN_ADDRESS = "0.0.0.0";
-  auto listenerResult = TcpListener::bind(LISTEN_ADDRESS, SERVER_PORT);
+  constexpr std::string_view listenAddress = "0.0.0.0";
+  auto listenerResult = TcpListener::bind(listenAddress, serverPort);
   if (!listenerResult) {
     std::println("[server] bind failed: {}", listenerResult.error().message);
     return 1;
   }
 
-  auto listener = std::move(listenerResult.value());
-  if (auto listenResult = listener.listen(); !listenResult) {
+  auto listenerInstance = std::move(listenerResult.value());
+  if (auto listenResult = listenerInstance.listen(); !listenResult) {
     std::println("[server] listen failed: {}", listenResult.error().message);
     return 1;
   }
 
-  std::println("[server] listening on {}:{}", LISTEN_ADDRESS, SERVER_PORT);
-  GameServer server{std::move(listener)};
+  std::println("[server] listening on {}:{}", listenAddress, serverPort);
+  GameServer server{std::move(listenerInstance)};
   server.run();
   return 0;
 }

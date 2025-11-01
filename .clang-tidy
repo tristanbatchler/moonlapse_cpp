@@ -6,22 +6,3 @@ Checks: >
   performance-*,
   readability-*
 WarningsAsErrors: clang-analyzer-*,bugprone-*,cppcoreguidelines-*
-CheckOptions:
-  - key: modernize-use-trailing-return-type.MinTypeNameLength
-    value: '0'
-  - key: modernize-use-using.IgnoreMacros
-    value: '1'
-  - key: cppcoreguidelines-avoid-magic-numbers.IgnoreEnumerators
-    value: '1'
-  - key: readability-identifier-naming.NamespaceCase
-    value: CamelCase
-  - key: readability-identifier-naming.ClassCase
-    value: PascalCase
-  - key: readability-identifier-naming.MethodCase
-    value: camelBack
-  - key: readability-identifier-naming.FunctionCase
-    value: camelBack
-  - key: readability-identifier-naming.VariableCase
-    value: camelBack
-  - key: readability-identifier-naming.ConstantCase
-    value: UPPER_CASE

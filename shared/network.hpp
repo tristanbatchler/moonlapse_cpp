@@ -6,9 +6,6 @@
 #include <cstdint>
 #include <cstring>
 #include <expected>
-#include <limits>
-#include <memory>
-#include <mutex>
 #include <span>
 #include <string>
 #include <string_view>
@@ -17,6 +14,8 @@
 #include <vector>
 
 #ifdef _WIN32
+#include <limits>
+#include <mutex>
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #else
@@ -33,22 +32,22 @@
 namespace Moonlapse::Net {
 
 enum class SocketErrorCode : std::uint8_t {
-  NONE = 0,
-  LIBRARY_INIT_FAILED,
-  RESOLVE_FAILED,
-  CONNECT_FAILED,
-  BIND_FAILED,
-  LISTEN_FAILED,
-  ACCEPT_FAILED,
-  SEND_FAILED,
-  RECEIVE_FAILED,
-  CONNECTION_CLOSED,
-  INVALID_STATE,
-  WOULD_BLOCK,
+  None = 0,
+  LibraryInitFailed,
+  ResolveFailed,
+  ConnectFailed,
+  BindFailed,
+  ListenFailed,
+  AcceptFailed,
+  SendFailed,
+  ReceiveFailed,
+  ConnectionClosed,
+  InvalidState,
+  WouldBlock,
 };
 
 struct SocketError {
-  SocketErrorCode code{SocketErrorCode::NONE};
+  SocketErrorCode code{SocketErrorCode::None};
   std::string message;
   std::error_code system;
 };
@@ -59,10 +58,10 @@ namespace Detail {
 
 #ifdef _WIN32
 using NativeHandle = SOCKET;
-inline constexpr NativeHandle INVALID_SOCKET_HANDLE = INVALID_SOCKET;
+inline constexpr NativeHandle invalidSocketHandle = INVALID_SOCKET;
 #else
 using NativeHandle = int;
-inline constexpr NativeHandle INVALID_SOCKET_HANDLE = -1;
+inline constexpr NativeHandle invalidSocketHandle = -1;
 #endif
 
 struct AddrInfoDeleter {
@@ -105,11 +104,11 @@ inline auto isWouldBlock(int nativeCode) noexcept -> bool {
 
 inline void closeHandle(NativeHandle handle) noexcept {
 #ifdef _WIN32
-  if (handle != INVALID_SOCKET_HANDLE) {
+  if (handle != invalidSocketHandle) {
     ::closesocket(handle);
   }
 #else
-  if (handle != INVALID_SOCKET_HANDLE) {
+  if (handle != invalidSocketHandle) {
     ::close(handle);
   }
 #endif
@@ -163,7 +162,7 @@ inline auto resolveAddress(std::string_view host, std::uint16_t port,
         std::string{"getaddrinfo: "} + ::gai_strerror(queryResult);
 #endif
     return std::unexpected(
-        SocketError{SocketErrorCode::RESOLVE_FAILED, std::move(message),
+        SocketError{SocketErrorCode::ResolveFailed, std::move(message),
                     std::error_code(queryResult, std::generic_category())});
   }
 
@@ -196,9 +195,8 @@ inline auto makeError(SocketErrorCode code, std::string_view context,
     }
   });
   if (initResult != 0) {
-    auto error = Detail::makeError(SocketErrorCode::LIBRARY_INIT_FAILED,
-                                   "WSAStartup", initResult);
-    return std::unexpected(std::move(error));
+    return std::unexpected(Detail::makeError(SocketErrorCode::LibraryInitFailed,
+                                             "WSAStartup", initResult));
   }
 #endif
   return {};
@@ -209,15 +207,16 @@ public:
   using NativeHandle = Detail::NativeHandle;
 
   TcpSocket() noexcept = default;
-  explicit TcpSocket(NativeHandle handle) noexcept : handle_{handle} {}
+  explicit TcpSocket(NativeHandle nativeHandle) noexcept
+      : m_handle{nativeHandle} {}
 
   TcpSocket(TcpSocket &&other) noexcept
-      : handle_{std::exchange(other.handle_, Detail::INVALID_SOCKET_HANDLE)} {}
+      : m_handle{std::exchange(other.m_handle, Detail::invalidSocketHandle)} {}
 
   auto operator=(TcpSocket &&other) noexcept -> TcpSocket & {
     if (this != &other) {
       close();
-      handle_ = std::exchange(other.handle_, Detail::INVALID_SOCKET_HANDLE);
+      m_handle = std::exchange(other.m_handle, Detail::invalidSocketHandle);
     }
     return *this;
   }
@@ -241,33 +240,33 @@ public:
     auto info = std::move(addresses.value());
 
     for (auto *entry = info.get(); entry != nullptr; entry = entry->ai_next) {
-      NativeHandle handle =
+      NativeHandle candidate =
           ::socket(entry->ai_family, entry->ai_socktype, entry->ai_protocol);
-      if (handle == Detail::INVALID_SOCKET_HANDLE) {
+      if (candidate == Detail::invalidSocketHandle) {
         continue;
       }
 
-      int connectStatus = ::connect(handle, entry->ai_addr,
+      int connectStatus = ::connect(candidate, entry->ai_addr,
                                     static_cast<int>(entry->ai_addrlen));
       if (connectStatus == 0) {
-        return TcpSocket{handle};
+        return TcpSocket{candidate};
       }
 
-      Detail::closeHandle(handle);
+      Detail::closeHandle(candidate);
     }
 
     return std::unexpected(
-        Detail::makeError(SocketErrorCode::CONNECT_FAILED, "connect"));
+        Detail::makeError(SocketErrorCode::ConnectFailed, "connect"));
   }
 
   [[nodiscard]] auto isOpen() const noexcept -> bool {
-    return handle_ != Detail::INVALID_SOCKET_HANDLE;
+    return m_handle != Detail::invalidSocketHandle;
   }
 
   auto close() noexcept -> void {
     if (isOpen()) {
-      Detail::closeHandle(handle_);
-      handle_ = Detail::INVALID_SOCKET_HANDLE;
+      Detail::closeHandle(m_handle);
+      m_handle = Detail::invalidSocketHandle;
     }
   }
 
@@ -276,20 +275,20 @@ public:
       return;
     }
 #ifdef _WIN32
-    ::shutdown(handle_, SD_BOTH);
+    ::shutdown(m_handle, SD_BOTH);
 #else
-    ::shutdown(handle_, SHUT_RDWR);
+    ::shutdown(m_handle, SHUT_RDWR);
 #endif
   }
 
   [[nodiscard]] auto nativeHandle() const noexcept -> NativeHandle {
-    return handle_;
+    return m_handle;
   }
 
   [[nodiscard]] auto send(std::span<const std::byte> buffer) const
       -> SocketResult<std::size_t> {
     if (!isOpen()) {
-      return std::unexpected(Detail::makeError(SocketErrorCode::INVALID_STATE,
+      return std::unexpected(Detail::makeError(SocketErrorCode::InvalidState,
                                                "send on closed socket", 0));
     }
     if (buffer.empty()) {
@@ -298,14 +297,14 @@ public:
 
     while (true) {
 #ifdef _WIN32
-      const auto maxLength =
+      constexpr auto maxLength =
           static_cast<std::size_t>(std::numeric_limits<int>::max());
       int length = static_cast<int>(std::min(buffer.size(), maxLength));
       auto pointer = Detail::toConstCharPointer(buffer.data());
-      int sendResult = ::send(handle_, pointer, length, 0);
+      int sendResult = ::send(m_handle, pointer, length, 0);
 #else
       auto length = buffer.size();
-      auto sendResult = ::send(handle_, buffer.data(), length, 0);
+      auto sendResult = ::send(m_handle, buffer.data(), length, 0);
 #endif
       if (sendResult >= 0) {
         return static_cast<std::size_t>(sendResult);
@@ -316,11 +315,11 @@ public:
         continue;
       }
       if (Detail::isWouldBlock(nativeCode)) {
-        return std::unexpected(Detail::makeError(SocketErrorCode::WOULD_BLOCK,
-                                                 "send", nativeCode));
+        return std::unexpected(
+            Detail::makeError(SocketErrorCode::WouldBlock, "send", nativeCode));
       }
       return std::unexpected(
-          Detail::makeError(SocketErrorCode::SEND_FAILED, "send", nativeCode));
+          Detail::makeError(SocketErrorCode::SendFailed, "send", nativeCode));
     }
   }
 
@@ -335,7 +334,7 @@ public:
       }
       if (result.value() == 0) {
         return std::unexpected(
-            Detail::makeError(SocketErrorCode::CONNECTION_CLOSED, "send"));
+            Detail::makeError(SocketErrorCode::ConnectionClosed, "send"));
       }
       sentTotal += result.value();
     }
@@ -345,7 +344,7 @@ public:
   [[nodiscard]] auto receive(std::span<std::byte> buffer) const
       -> SocketResult<std::size_t> {
     if (!isOpen()) {
-      return std::unexpected(Detail::makeError(SocketErrorCode::INVALID_STATE,
+      return std::unexpected(Detail::makeError(SocketErrorCode::InvalidState,
                                                "receive on closed socket", 0));
     }
     if (buffer.empty()) {
@@ -355,24 +354,24 @@ public:
     while (true) {
       if (!isOpen()) {
         return std::unexpected(Detail::makeError(
-            SocketErrorCode::INVALID_STATE, "receive on closed socket", 0));
+            SocketErrorCode::InvalidState, "receive on closed socket", 0));
       }
 #ifdef _WIN32
-      const auto maxLength =
+      constexpr auto maxLength =
           static_cast<std::size_t>(std::numeric_limits<int>::max());
       int length = static_cast<int>(std::min(buffer.size(), maxLength));
       auto pointer = Detail::toCharPointer(buffer.data());
-      int receiveResult = ::recv(handle_, pointer, length, 0);
+      int receiveResult = ::recv(m_handle, pointer, length, 0);
 #else
       auto length = buffer.size();
-      auto receiveResult = ::recv(handle_, buffer.data(), length, 0);
+      auto receiveResult = ::recv(m_handle, buffer.data(), length, 0);
 #endif
       if (receiveResult > 0) {
         return static_cast<std::size_t>(receiveResult);
       }
       if (receiveResult == 0) {
-        return std::unexpected(Detail::makeError(
-            SocketErrorCode::CONNECTION_CLOSED, "receive", 0));
+        return std::unexpected(
+            Detail::makeError(SocketErrorCode::ConnectionClosed, "receive", 0));
       }
 
       int nativeCode = Detail::lastErrorCode();
@@ -380,10 +379,10 @@ public:
         continue;
       }
       if (Detail::isWouldBlock(nativeCode)) {
-        return std::unexpected(Detail::makeError(SocketErrorCode::WOULD_BLOCK,
+        return std::unexpected(Detail::makeError(SocketErrorCode::WouldBlock,
                                                  "receive", nativeCode));
       }
-      return std::unexpected(Detail::makeError(SocketErrorCode::RECEIVE_FAILED,
+      return std::unexpected(Detail::makeError(SocketErrorCode::ReceiveFailed,
                                                "receive", nativeCode));
     }
   }
@@ -400,7 +399,7 @@ public:
       }
       if (chunk.value() == 0) {
         return std::unexpected(
-            Detail::makeError(SocketErrorCode::CONNECTION_CLOSED, "receive"));
+            Detail::makeError(SocketErrorCode::ConnectionClosed, "receive"));
       }
       received += chunk.value();
     }
@@ -408,7 +407,7 @@ public:
   }
 
 private:
-  NativeHandle handle_{Detail::INVALID_SOCKET_HANDLE};
+  NativeHandle m_handle{Detail::invalidSocketHandle};
 };
 
 class TcpListener {
@@ -417,14 +416,14 @@ public:
 
   TcpListener() noexcept = default;
   TcpListener(TcpListener &&other) noexcept
-      : handle_{std::exchange(other.handle_, Detail::INVALID_SOCKET_HANDLE)},
-        family_{std::exchange(other.family_, AF_UNSPEC)} {}
+      : m_handle{std::exchange(other.m_handle, Detail::invalidSocketHandle)},
+        m_family{std::exchange(other.m_family, AF_UNSPEC)} {}
 
   auto operator=(TcpListener &&other) noexcept -> TcpListener & {
     if (this != &other) {
       close();
-      handle_ = std::exchange(other.handle_, Detail::INVALID_SOCKET_HANDLE);
-      family_ = std::exchange(other.family_, AF_UNSPEC);
+      m_handle = std::exchange(other.m_handle, Detail::invalidSocketHandle);
+      m_family = std::exchange(other.m_family, AF_UNSPEC);
     }
     return *this;
   }
@@ -448,75 +447,75 @@ public:
     auto info = std::move(addresses.value());
 
     for (auto *entry = info.get(); entry != nullptr; entry = entry->ai_next) {
-      NativeHandle handle =
+      NativeHandle candidate =
           ::socket(entry->ai_family, entry->ai_socktype, entry->ai_protocol);
-      if (handle == Detail::INVALID_SOCKET_HANDLE) {
+      if (candidate == Detail::invalidSocketHandle) {
         continue;
       }
 
-      Detail::setReuseAddress(handle);
+      Detail::setReuseAddress(candidate);
 
-      int bindStatus =
-          ::bind(handle, entry->ai_addr, static_cast<int>(entry->ai_addrlen));
+      int bindStatus = ::bind(candidate, entry->ai_addr,
+                              static_cast<int>(entry->ai_addrlen));
       if (bindStatus == 0) {
         TcpListener listener;
-        listener.handle_ = handle;
-        listener.family_ = entry->ai_family;
+        listener.m_handle = candidate;
+        listener.m_family = entry->ai_family;
         return listener;
       }
 
-      Detail::closeHandle(handle);
+      Detail::closeHandle(candidate);
     }
 
     return std::unexpected(
-        Detail::makeError(SocketErrorCode::BIND_FAILED, "bind"));
+        Detail::makeError(SocketErrorCode::BindFailed, "bind"));
   }
 
   [[nodiscard]] auto isOpen() const noexcept -> bool {
-    return handle_ != Detail::INVALID_SOCKET_HANDLE;
+    return m_handle != Detail::invalidSocketHandle;
   }
 
   auto close() noexcept -> void {
     if (isOpen()) {
-      Detail::closeHandle(handle_);
-      handle_ = Detail::INVALID_SOCKET_HANDLE;
-      family_ = AF_UNSPEC;
+      Detail::closeHandle(m_handle);
+      m_handle = Detail::invalidSocketHandle;
+      m_family = AF_UNSPEC;
     }
   }
 
   [[nodiscard]] auto listen(int backlog = SOMAXCONN) const
       -> SocketResult<void> {
     if (!isOpen()) {
-      return std::unexpected(Detail::makeError(SocketErrorCode::INVALID_STATE,
+      return std::unexpected(Detail::makeError(SocketErrorCode::InvalidState,
                                                "listen on closed socket", 0));
     }
-    if (::listen(handle_, backlog) != 0) {
+    if (::listen(m_handle, backlog) != 0) {
       return std::unexpected(
-          Detail::makeError(SocketErrorCode::LISTEN_FAILED, "listen"));
+          Detail::makeError(SocketErrorCode::ListenFailed, "listen"));
     }
     return {};
   }
 
   [[nodiscard]] auto accept() const -> SocketResult<TcpSocket> {
     if (!isOpen()) {
-      return std::unexpected(Detail::makeError(SocketErrorCode::INVALID_STATE,
+      return std::unexpected(Detail::makeError(SocketErrorCode::InvalidState,
                                                "accept on closed socket", 0));
     }
 
 #ifdef _WIN32
-    NativeHandle client = ::accept(handle_, nullptr, nullptr);
-    if (client == Detail::INVALID_SOCKET_HANDLE) {
+    NativeHandle client = ::accept(m_handle, nullptr, nullptr);
+    if (client == Detail::invalidSocketHandle) {
       return std::unexpected(
-          Detail::makeError(SocketErrorCode::ACCEPT_FAILED, "accept"));
+          Detail::makeError(SocketErrorCode::AcceptFailed, "accept"));
     }
 #else
     sockaddr_storage storage{};
     socklen_t length = sizeof(storage);
     auto *addressPointer = std::bit_cast<sockaddr *>(std::addressof(storage));
-    NativeHandle client = ::accept(handle_, addressPointer, &length);
-    if (client == Detail::INVALID_SOCKET_HANDLE) {
+    NativeHandle client = ::accept(m_handle, addressPointer, &length);
+    if (client == Detail::invalidSocketHandle) {
       return std::unexpected(
-          Detail::makeError(SocketErrorCode::ACCEPT_FAILED, "accept"));
+          Detail::makeError(SocketErrorCode::AcceptFailed, "accept"));
     }
 #endif
 
@@ -524,8 +523,8 @@ public:
   }
 
 private:
-  NativeHandle handle_{Detail::INVALID_SOCKET_HANDLE};
-  int family_{AF_UNSPEC};
+  NativeHandle m_handle{Detail::invalidSocketHandle};
+  int m_family{AF_UNSPEC};
 };
 
 } // namespace Moonlapse::Net

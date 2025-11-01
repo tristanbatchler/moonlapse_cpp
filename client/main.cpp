@@ -31,11 +31,11 @@ namespace Protocol = Moonlapse::Protocol;
 
 namespace {
 
-constexpr std::string_view SERVER_ADDRESS = "127.0.0.1";
-constexpr std::uint16_t SERVER_PORT = 40500;
-constexpr int GRID_WIDTH = 40;
-constexpr int GRID_HEIGHT = 20;
-constexpr auto REFRESH_DELAY = std::chrono::milliseconds{50};
+constexpr std::string_view serverAddress = "127.0.0.1";
+constexpr std::uint16_t serverPort = 40500;
+constexpr int gridWidth = 40;
+constexpr int gridHeight = 20;
+constexpr auto refreshDelay = std::chrono::milliseconds{50};
 
 template <typename... Handlers> struct Overloaded : Handlers... {
   using Handlers::operator()...;
@@ -48,15 +48,15 @@ Overloaded(Handlers...) -> Overloaded<Handlers...>;
     -> std::string_view {
   using Protocol::PacketError;
   switch (error) {
-  case PacketError::VERSION_MISMATCH:
+  case PacketError::VersionMismatch:
     return "version mismatch";
-  case PacketError::UNKNOWN_TYPE:
+  case PacketError::UnknownType:
     return "unknown packet type";
-  case PacketError::TRUNCATED:
+  case PacketError::Truncated:
     return "truncated payload";
-  case PacketError::SIZE_MISMATCH:
+  case PacketError::SizeMismatch:
     return "size mismatch";
-  case PacketError::INVALID_PAYLOAD:
+  case PacketError::InvalidPayload:
     return "invalid payload";
   }
   return "unclassified packet error";
@@ -100,13 +100,13 @@ struct ClientState {
     -> std::optional<Protocol::Direction> {
   switch (key) {
   case KEY_UP:
-    return Protocol::Direction::UP;
+    return Protocol::Direction::Up;
   case KEY_DOWN:
-    return Protocol::Direction::DOWN;
+    return Protocol::Direction::Down;
   case KEY_LEFT:
-    return Protocol::Direction::LEFT;
+    return Protocol::Direction::Left;
   case KEY_RIGHT:
-    return Protocol::Direction::RIGHT;
+    return Protocol::Direction::Right;
   default:
     return std::nullopt;
   }
@@ -116,10 +116,10 @@ void drawFrame(const std::vector<Protocol::PlayerState> &snapshot,
                std::optional<Protocol::PlayerId> selfId) {
   erase();
 
-  for (int row = 0; row <= GRID_HEIGHT + 1; ++row) {
-    for (int column = 0; column <= GRID_WIDTH + 1; ++column) {
-      auto borderCell = row == 0 || row == GRID_HEIGHT + 1 || column == 0 ||
-                        column == GRID_WIDTH + 1;
+  for (int row = 0; row <= gridHeight + 1; ++row) {
+    for (int column = 0; column <= gridWidth + 1; ++column) {
+      auto borderCell = row == 0 || row == gridHeight + 1 || column == 0 ||
+                        column == gridWidth + 1;
       auto borderGlyphChar = static_cast<unsigned char>(borderCell ? '#' : ' ');
       auto borderCharacter = static_cast<chtype>(borderGlyphChar);
       mvaddch(row, column, borderCharacter);
@@ -129,8 +129,8 @@ void drawFrame(const std::vector<Protocol::PlayerState> &snapshot,
   for (const auto &player : snapshot) {
     auto positionRow = static_cast<int>(player.position.y) + 1;
     auto positionColumn = static_cast<int>(player.position.x) + 1;
-    if (positionColumn < 1 || positionColumn > GRID_WIDTH || positionRow < 1 ||
-        positionRow > GRID_HEIGHT) {
+    if (positionColumn < 1 || positionColumn > gridWidth || positionRow < 1 ||
+        positionRow > gridHeight) {
       continue;
     }
     auto isSelfPlayer = selfId.has_value() && player.player == *selfId;
@@ -139,7 +139,7 @@ void drawFrame(const std::vector<Protocol::PlayerState> &snapshot,
     mvaddch(positionRow, positionColumn, playerGlyph);
   }
 
-  auto infoRowIndex = GRID_HEIGHT + 3;
+  auto infoRowIndex = gridHeight + 3;
   std::string controlsMessage = "Controls: arrow keys to move, q to quit.";
   mvaddnstr(infoRowIndex, 1, controlsMessage.c_str(),
             static_cast<int>(controlsMessage.size()));
@@ -157,7 +157,7 @@ void receiverLoop(const std::shared_ptr<TcpSocket> &socket, ClientState &state,
                   std::atomic_bool &running, std::atomic_bool &connectionActive,
                   std::mutex &errorMutex, std::string &lastError) {
   while (running.load()) {
-    auto headerBytes = socket->receiveExact(Protocol::PACKET_HEADER_SIZE);
+    auto headerBytes = socket->receiveExact(Protocol::packetHeaderSize);
     if (!headerBytes) {
       {
         std::scoped_lock guard{errorMutex};
@@ -251,7 +251,7 @@ auto sendMovement(const std::shared_ptr<TcpSocket> &socket, ClientState &state,
 } // namespace
 
 auto main() -> int {
-  auto socketResult = TcpSocket::connect(SERVER_ADDRESS, SERVER_PORT);
+  auto socketResult = TcpSocket::connect(serverAddress, serverPort);
   if (!socketResult) {
     std::println("[client] failed to connect: {}",
                  socketResult.error().message);
@@ -317,7 +317,7 @@ auto main() -> int {
       }
 
       drawFrame(snapshot, selfId);
-      std::this_thread::sleep_for(REFRESH_DELAY);
+      std::this_thread::sleep_for(refreshDelay);
     }
 
     running.store(false);
