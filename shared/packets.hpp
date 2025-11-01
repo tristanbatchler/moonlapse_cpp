@@ -151,7 +151,8 @@ template <std::integral T>
     return std::unexpected(PacketError::UnknownType);
   }
 
-  return PacketHeader{*version, decodedType, *payloadSize};
+  return PacketHeader{
+      .version = *version, .type = decodedType, .payloadSize = *payloadSize};
 }
 
 class PayloadWriter {
@@ -340,7 +341,8 @@ decodeStateSnapshot(std::span<const std::byte> payload)
     }
 
     packet.players.emplace_back(
-        PlayerState{*playerId, Position{*positionX, *positionY}});
+        PlayerState{.player = *playerId,
+                    .position = Position{.x = *positionX, .y = *positionY}});
   }
 
   if (reader.remaining() != 0) {

@@ -104,7 +104,7 @@ private:
     Session(Protocol::PlayerId playerIdentifier, TcpSocket &&socket) noexcept
         : playerId{playerIdentifier}, socket{std::move(socket)} {}
 
-    SocketResult<void> send(std::span<const std::byte> payload) {
+    auto send(std::span<const std::byte> payload) -> SocketResult<void> {
       std::scoped_lock guard{sendMutex};
       return socket.sendAll(payload);
     }
@@ -127,7 +127,8 @@ private:
 
     {
       std::scoped_lock guard{playersMutex};
-      players.emplace(playerIdentifier, PlayerEntry{position, session});
+      players.emplace(playerIdentifier,
+                      PlayerEntry{.position = position, .session = session});
     }
 
     std::println("[server] player {} connected at ({}, {})", playerIdentifier,

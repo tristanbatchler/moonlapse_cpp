@@ -242,7 +242,8 @@ auto sendMovement(const std::shared_ptr<TcpSocket> &socket, ClientState &state,
     return {};
   }
 
-  Protocol::MovementPacket packet{*playerIdentifier, direction};
+  Protocol::MovementPacket packet{.player = *playerIdentifier,
+                                  .direction = direction};
   auto encoded = Protocol::encode(packet);
   std::scoped_lock guard{sendMutex};
   return socket->sendAll(std::span<const std::byte>{encoded});
@@ -310,8 +311,8 @@ auto main() -> int {
         std::scoped_lock guard{state.mutex};
         snapshot.reserve(state.players.size());
         for (const auto &[playerIdentifier, position] : state.players) {
-          snapshot.emplace_back(
-              Protocol::PlayerState{playerIdentifier, position});
+          snapshot.emplace_back(Protocol::PlayerState{
+              .player = playerIdentifier, .position = position});
         }
         selfId = state.selfId;
       }

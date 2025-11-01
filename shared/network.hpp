@@ -161,9 +161,10 @@ inline auto resolveAddress(std::string_view host, std::uint16_t port,
     std::string message =
         std::string{"getaddrinfo: "} + ::gai_strerror(queryResult);
 #endif
-    return std::unexpected(
-        SocketError{SocketErrorCode::ResolveFailed, std::move(message),
-                    std::error_code(queryResult, std::generic_category())});
+    return std::unexpected(SocketError{
+        .code = SocketErrorCode::ResolveFailed,
+        .message = std::move(message),
+        .system = std::error_code(queryResult, std::generic_category())});
   }
 
   return AddrInfoPtr{rawInfo};
@@ -178,7 +179,8 @@ inline auto makeError(SocketErrorCode code, std::string_view context,
     message.append(": ");
     message.append(systemError.message());
   }
-  return SocketError{code, std::move(message), systemError};
+  return SocketError{
+      .code = code, .message = std::move(message), .system = systemError};
 }
 
 } // namespace Detail
