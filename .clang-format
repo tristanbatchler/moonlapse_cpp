@@ -1,0 +1,9 @@
+BasedOnStyle: Google
+Standard: Cpp23
+UseTab: Never
+IndentWidth: 4
+SpacesBeforeTrailingComments: 1
+BreakBeforeBraces: Allman
+AllowShortFunctionsOnASingleLine: Empty
+DerivePointerAlignment: false
+PointerAlignment: Left

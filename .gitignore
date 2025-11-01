@@ -1,0 +1,42 @@
+.github/
+.docs/
+
+# Build artifacts
+/build/
+**/CMakeFiles/
+**/CMakeCache.txt
+**/cmake_install.cmake
+**/Makefile
+**/*.a
+**/*.so
+**/*.dylib
+**/*.dll
+**/*.exe
+**/*.obj
+**/*.o
+**/*.lo
+
+# Generated compile commands
+compile_commands.json
+compile_commands*.json
+
+# Packaging leftovers
+**/CMakeScratch/
+**/pkgRedirects/
+
+# IDE state
+.vscode/
+.idea/
+*.code-workspace
+
+# Logs and diagnostics
+**/*.log
+**/*.traces
+
+# OS metadata
+desktop.ini
+Thumbs.db
+.DS_Store
+
+# Temporary files
+.cache/
