@@ -8,8 +8,8 @@
 #endif
 
 #include <atomic>
-#include <chrono>
 #include <cctype>
+#include <chrono>
 #include <cstdint>
 #include <deque>
 #include <format>
@@ -202,9 +202,8 @@ auto drawChatLog(int startRow, std::span<const ChatEntry> chatMessages) -> int {
   mvaddnstr(startRow, 1, "Recent chat:", 12);
   int row = startRow + 1;
   for (const auto &entry : chatMessages) {
-    const auto line =
-        std::format("[{}] {}", static_cast<unsigned>(entry.player),
-                    entry.message);
+    const auto line = std::format(
+        "[{}] {}", static_cast<unsigned>(entry.player), entry.message);
     mvaddnstr(row, 1, line.c_str(), static_cast<int>(line.size()));
     ++row;
   }
@@ -239,12 +238,12 @@ void drawFrame(const std::vector<Protocol::PlayerState> &snapshot,
 }
 
 auto sendMovement(const std::shared_ptr<TcpSocket> &socket, ClientState &state,
-          Protocol::Direction direction, std::mutex &sendMutex)
-  -> SocketResult<void>;
+                  Protocol::Direction direction, std::mutex &sendMutex)
+    -> SocketResult<void>;
 
 auto sendChat(const std::shared_ptr<TcpSocket> &socket, ClientState &state,
-        std::string_view message, std::mutex &sendMutex)
-  -> SocketResult<void>;
+              std::string_view message, std::mutex &sendMutex)
+    -> SocketResult<void>;
 
 auto handleSnapshot(ClientState &state,
                     const Protocol::StateSnapshotPacket &snapshot) -> void {
@@ -352,15 +351,13 @@ auto handleMovementInputKey(int inputKey, ChatUiState &chatState,
 
 auto handleInputKey(int inputKey, ChatUiState &chatState,
                     const std::shared_ptr<TcpSocket> &connection,
-                    ClientState &state, RuntimeContext &runtime)
-    -> LoopAction {
+                    ClientState &state, RuntimeContext &runtime) -> LoopAction {
   if (inputKey == ERR) {
     return LoopAction::Continue;
   }
 
   if (chatState.active) {
-    return handleChatInputKey(inputKey, chatState, connection, state,
-                              runtime);
+    return handleChatInputKey(inputKey, chatState, connection, state, runtime);
   }
 
   return handleMovementInputKey(inputKey, chatState, connection, state,
@@ -373,8 +370,8 @@ auto gatherRenderState(ClientState &state) -> RenderState {
 
   render.snapshot.reserve(state.players.size());
   for (const auto &[playerIdentifier, position] : state.players) {
-    render.snapshot.emplace_back(
-        Protocol::PlayerState{.player = playerIdentifier, .position = position});
+    render.snapshot.emplace_back(Protocol::PlayerState{
+        .player = playerIdentifier, .position = position});
   }
 
   render.chatMessages.reserve(state.chatLog.size());
@@ -439,18 +436,17 @@ void receiverLoop(const std::shared_ptr<TcpSocket> &socket, ClientState &state,
       return;
     }
 
-    std::visit(
-        Overloaded{[&](const Protocol::StateSnapshotPacket &snapshot) {
-                     handleSnapshot(state, snapshot);
-                   },
-                   [](const Protocol::MovementPacket &) {
-                     // Movement updates are broadcast as state
-                     // snapshots; ignore stray packets.
-                   },
-                  [&](const Protocol::ChatPacket &chat) {
-                    handleChat(state, chat);
-                  }},
-        packetResult.value());
+    std::visit(Overloaded{[&](const Protocol::StateSnapshotPacket &snapshot) {
+                            handleSnapshot(state, snapshot);
+                          },
+                          [](const Protocol::MovementPacket &) {
+                            // Movement updates are broadcast as state
+                            // snapshots; ignore stray packets.
+                          },
+                          [&](const Protocol::ChatPacket &chat) {
+                            handleChat(state, chat);
+                          }},
+               packetResult.value());
   }
 }
 
