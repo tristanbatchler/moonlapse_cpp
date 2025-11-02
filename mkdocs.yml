@@ -1,0 +1,13 @@
+site_name: "Moonlapse Tutorials"
+docs_dir: ".docs/tutorial"
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - Build Modern Curses MMO: 00_build_modern_curses_mmo.md
+  - Shared Protocol: 01_shared_protocol.md
+  - Networking Layer: 02_networking_layer.md
+  - Authoritative Server: 03_authoritative_server.md
+  - Curses Client: 04_curses_client.md
+  - Ship and Extend: 05_ship_and_extend.md
