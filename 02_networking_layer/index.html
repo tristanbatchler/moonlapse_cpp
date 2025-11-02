@@ -1,0 +1,1125 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../01_shared_protocol/">
+      
+      
+        <link rel="next" href="../03_authoritative_server/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.23">
+    
+    
+      
+        <title>Networking Layer - Moonlapse Tutorials</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.84d31ad4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#02-building-the-networking-layer-with-raii-sockets" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Moonlapse Tutorials" class="md-header__button md-logo" aria-label="Moonlapse Tutorials" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Moonlapse Tutorials
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Networking Layer
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Moonlapse Tutorials" class="md-nav__button md-logo" aria-label="Moonlapse Tutorials" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Moonlapse Tutorials
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../00_build_modern_curses_mmo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Build Modern Curses MMO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01_shared_protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Shared Protocol
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Networking Layer
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Networking Layer
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-shape-the-networking-surface-area" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Shape the networking surface area
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Shape the networking surface area">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-cross-platform-shims-live-in-detail" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1 Cross-platform shims live in Detail
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-tcpsocket-owned-connections-safe-sends" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. TcpSocket: owned connections, safe sends
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. TcpSocket: owned connections, safe sends">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-deterministic-ownership-in-a-gc-free-world" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1 Deterministic ownership in a GC-free world
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-factory-functions-instead-of-raw-constructors" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2 Factory functions instead of raw constructors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-a-move-semantics-primer" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3 A move semantics primer
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-blocking-sockets-and-partial-transfers" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.4 Blocking sockets and partial transfers
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-build-checkpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.5 Build checkpoint
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-tcplistener-raii-for-bindlisten" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. TcpListener: RAII for bind/listen
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-wiring-sockets-into-the-server-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Wiring sockets into the server loop
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-feeding-the-client-from-a-receiver-thread" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Feeding the client from a receiver thread
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-handling-errors-without-exceptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Handling errors without exceptions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-checklist-before-moving-on" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Checklist before moving on
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03_authoritative_server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Authoritative Server
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04_curses_client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Curses Client
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05_ship_and_extend/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Ship and Extend
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-shape-the-networking-surface-area" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Shape the networking surface area
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Shape the networking surface area">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-cross-platform-shims-live-in-detail" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1 Cross-platform shims live in Detail
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-tcpsocket-owned-connections-safe-sends" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. TcpSocket: owned connections, safe sends
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. TcpSocket: owned connections, safe sends">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-deterministic-ownership-in-a-gc-free-world" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1 Deterministic ownership in a GC-free world
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-factory-functions-instead-of-raw-constructors" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2 Factory functions instead of raw constructors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-a-move-semantics-primer" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3 A move semantics primer
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-blocking-sockets-and-partial-transfers" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.4 Blocking sockets and partial transfers
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-build-checkpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.5 Build checkpoint
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-tcplistener-raii-for-bindlisten" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. TcpListener: RAII for bind/listen
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-wiring-sockets-into-the-server-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Wiring sockets into the server loop
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-feeding-the-client-from-a-receiver-thread" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Feeding the client from a receiver thread
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-handling-errors-without-exceptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Handling errors without exceptions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-checklist-before-moving-on" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Checklist before moving on
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="02-building-the-networking-layer-with-raii-sockets">§02 Building the Networking Layer with RAII Sockets</h1>
+<p>In §01 we modelled packets and proved the encode/decode pipeline. Now we have to move those octets across a wire. This chapter builds the cross-platform networking primitives that power both the server and the client. You will:</p>
+<ol>
+<li>wrap operating-system sockets in RAII-friendly C++23 classes,</li>
+<li>propagate failures with <code>std::expected</code>-style results instead of errno checks,</li>
+<li>implement blocking send/receive helpers that respect partial writes,</li>
+<li>compose those helpers inside the server accept loop and the client receiver thread.</li>
+</ol>
+<p>By the end you will understand every line of <code>shared/network.hpp</code> and how the higher-level modules rely on it.</p>
+<hr />
+<h2 id="1-shape-the-networking-surface-area">1. Shape the networking surface area</h2>
+<p>We hide the platform details in a small namespace: <code>Moonlapse::Net</code>. Two public classes cover the entire socket lifecycle:</p>
+<ul>
+<li><code>TcpSocket</code> models a connected TCP endpoint (client side or accepted server connection).</li>
+<li><code>TcpListener</code> models a listening socket that can accept new clients.</li>
+</ul>
+<p>Both types follow RAII: their destructors close the underlying handle automatically. There is no way to leak a socket by forgetting to call <code>close()</code>.</p>
+<pre><code class="language-cpp">namespace Moonlapse::Net {
+
+enum class SocketErrorCode : std::uint8_t {
+  None,
+  LibraryInitFailed,
+  ResolveFailed,
+  ConnectFailed,
+  BindFailed,
+  ListenFailed,
+  AcceptFailed,
+  SendFailed,
+  ReceiveFailed,
+  ConnectionClosed,
+  InvalidState,
+  WouldBlock,
+};
+
+struct SocketError {
+  SocketErrorCode code{SocketErrorCode::None};
+  std::string message;
+  std::error_code system;
+};
+
+template &lt;typename T&gt;
+using SocketResult = std::expected&lt;T, SocketError&gt;;
+</code></pre>
+<p>The codecs live alongside the socket wrappers so every operation that can fail returns a <code>SocketResult&lt;T&gt;</code>. Callers must check the result; the compiler enforces it.</p>
+<h3 id="11-cross-platform-shims-live-in-detail">1.1 Cross-platform shims live in <code>Detail</code></h3>
+<p>The <code>Detail</code> namespace stores the platform glue: native handle typedefs, RAII deleters for <code>addrinfo</code>, helpers to convert pointer types, and wrappers that translate errno/<code>WSAGetLastError</code> into <code>std::error_code</code>. You never touch those from the client or server—<code>TcpSocket</code> calls them internally.</p>
+<p>Key helpers include:</p>
+<ul>
+<li><code>resolveAddress(host, port, passive)</code> wraps <code>getaddrinfo</code>.</li>
+<li><code>makeError(code, context, nativeCode)</code> decorates a high-level <code>SocketError</code> with the OS message.</li>
+<li><code>ensureSocketLibrary()</code> runs <code>WSAStartup</code> on Windows once and registers <code>WSACleanup()</code> via <code>std::atexit</code>.</li>
+</ul>
+<pre><code class="language-cpp">inline auto makeError(SocketErrorCode code, std::string_view context,
+                      int nativeCode = -1) -&gt; SocketError {
+  int effective = nativeCode &gt;= 0 ? nativeCode : lastErrorCode();
+  auto system = makeSystemError(effective);
+  std::string message(context);
+  if (effective != 0) {
+    message.append(&quot;: &quot;);
+    message.append(system.message());
+  }
+  return SocketError{.code = code, .message = std::move(message),
+                     .system = system};
+}
+</code></pre>
+<p>That little wrapper highlights the theme for the whole layer: grab the
+platform error, translate it into a portable <code>std::error_code</code>, and return an
+object the caller can inspect without touching errno directly.</p>
+<p>🧠 <strong>Concept note:</strong> <code>ensureSocketLibrary()</code> only does real work on Windows. It
+uses <code>std::call_once</code> to invoke <code>WSAStartup</code> exactly one time and registers
+<code>WSACleanup()</code> with <code>std::atexit</code>. On Linux and macOS the function returns
+immediately, but the call sites stay symmetric across platforms.</p>
+<p>The thin shims keep the public RAII classes small and readable.</p>
+<hr />
+<h2 id="2-tcpsocket-owned-connections-safe-sends">2. <code>TcpSocket</code>: owned connections, safe sends</h2>
+<p><code>TcpSocket</code> owns a single connected handle. It is move-only to prevent accidental sharing. Construction uses factory functions:</p>
+<ul>
+<li><code>TcpSocket::connect(host, port)</code> for clients.</li>
+<li><code>TcpListener::accept()</code> for servers.</li>
+</ul>
+<pre><code class="language-cpp">class TcpSocket {
+public:
+  TcpSocket() noexcept = default;
+  explicit TcpSocket(NativeHandle nativeHandle) noexcept;
+  TcpSocket(TcpSocket&amp;&amp; other) noexcept;
+  auto operator=(TcpSocket&amp;&amp; other) noexcept -&gt; TcpSocket&amp;;
+  ~TcpSocket() { close(); }
+
+  [[nodiscard]] static auto connect(std::string_view host,
+                                    std::uint16_t port)
+      -&gt; SocketResult&lt;TcpSocket&gt;;
+
+  [[nodiscard]] auto send(std::span&lt;const std::byte&gt; buffer) const
+      -&gt; SocketResult&lt;std::size_t&gt;;
+  [[nodiscard]] auto sendAll(std::span&lt;const std::byte&gt; buffer) const
+      -&gt; SocketResult&lt;void&gt;;
+  [[nodiscard]] auto receive(std::span&lt;std::byte&gt; buffer) const
+      -&gt; SocketResult&lt;std::size_t&gt;;
+  [[nodiscard]] auto receiveExact(std::size_t byteCount) const
+      -&gt; SocketResult&lt;std::vector&lt;std::byte&gt;&gt;;
+
+  void shutdown() const noexcept;
+  void close() noexcept;
+  [[nodiscard]] auto isOpen() const noexcept -&gt; bool;
+};
+</code></pre>
+<p>🧠 <strong>Concept note:</strong> Methods such as <code>send(...) const</code> look odd if you come
+from Go or Python. In C++ <code>const</code> signals that the observable state of the
+object does not change—writing to the socket is an external side effect, but
+the wrapper’s data members stay untouched, so we can safely mark the method
+<code>const</code>.</p>
+<h3 id="21-deterministic-ownership-in-a-gc-free-world">2.1 Deterministic ownership in a GC-free world</h3>
+<p>Go and Python developers normally lean on garbage collection or <code>defer</code> / context
+managers for cleanup. C++ has no GC, so RAII (Resource Acquisition Is
+Initialization) is how we guarantee deterministic destruction. When a
+<code>TcpSocket</code> instance leaves scope its destructor immediately calls <code>close()</code>,
+which in turn invokes <code>Detail::closeHandle</code>. There is no window where the
+operating system handle lingers because a collector has not run yet.</p>
+<blockquote>
+<p><strong>Contrast:</strong> In Go you might write <code>defer conn.Close()</code> and trust the runtime
+to run it eventually. In this codebase, the compiler inserts the call at scope
+exit, so the handle closes even if we return early on error.</p>
+</blockquote>
+<pre><code class="language-c">// C-style sockets demand manual cleanup on every exit path.
+int fd = socket(AF_INET, SOCK_STREAM, 0);
+if (fd == -1) { return -1; }
+// ... configure fd ...
+close(fd); // must remember this for every return statement
+</code></pre>
+<p>RAII turns the closing logic into a destructor so every code path is covered
+without duplicated <code>close()</code> calls.</p>
+<h3 id="22-factory-functions-instead-of-raw-constructors">2.2 Factory functions instead of raw constructors</h3>
+<p>The static <code>connect()</code> function hides the platform discovery (<code>getaddrinfo</code>),
+performs the OS call, and returns either a fully initialized socket or an
+error. A plain constructor cannot report failure, so we favour factory
+functions that return <code>SocketResult&lt;TcpSocket&gt;</code>. Callers spell
+<code>auto socket = TcpSocket::connect(...);</code> and must check the result before they
+obtain a usable object.</p>
+<h3 id="23-a-move-semantics-primer">2.3 A move semantics primer</h3>
+<p>Sockets represent unique ownership: duplicating the handle would let two
+objects close it twice. We therefore delete copy operations and implement
+move-only behaviour:</p>
+<pre><code class="language-cpp">TcpSocket(TcpSocket&amp;&amp; other) noexcept
+  : m_handle{std::exchange(other.m_handle, Detail::invalidSocketHandle)} {}
+
+auto operator=(TcpSocket&amp;&amp; other) noexcept -&gt; TcpSocket&amp; {
+  if (this != &amp;other) {
+    close();
+    m_handle =
+        std::exchange(other.m_handle, Detail::invalidSocketHandle);
+  }
+  return *this;
+}
+</code></pre>
+<p>🧠 <strong>Concept note:</strong> <code>std::exchange</code> swaps the current handle with
+<code>invalidSocketHandle</code> in one expression, leaving the moved-from object in a
+safe, closed state. That is the C++23 way to spell “take ownership and null out
+the source” without manual <code>std::swap</code> plumbing.</p>
+<h3 id="24-blocking-sockets-and-partial-transfers">2.4 Blocking sockets and partial transfers</h3>
+<p>TCP sockets are stream oriented. A single call to <code>send</code> or <code>recv</code> talks to the
+kernel, which may accept fewer bytes than requested because its internal buffer
+is full. We loop until the entire message is transferred:</p>
+<pre><code class="language-cpp">[[nodiscard]] auto TcpSocket::sendAll(std::span&lt;const std::byte&gt; buffer) const
+    -&gt; SocketResult&lt;void&gt; {
+  std::size_t sentTotal = 0;
+  while (sentTotal &lt; buffer.size()) {
+    auto chunk = send(buffer.subspan(sentTotal));
+    if (!chunk) {
+      return std::unexpected(chunk.error());
+    }
+    if (chunk.value() == 0) {
+      return std::unexpected(
+          Detail::makeError(SocketErrorCode::ConnectionClosed, &quot;send&quot;));
+    }
+    sentTotal += chunk.value();
+  }
+  return {};
+}
+</code></pre>
+<p>Both <code>send()</code> and <code>receive()</code> retry automatically on interruptible errors such
+as <code>EINTR</code>. When the OS reports <code>EWOULDBLOCK</code>/<code>WSAEWOULDBLOCK</code> we bubble up
+<code>SocketErrorCode::WouldBlock</code>, which lets us extend the wrappers to
+non-blocking mode later.</p>
+<p>🧠 <strong>Concept note:</strong> <em>Blocking I/O</em> means the call parks the current thread
+until data is ready. <code>receiveExact(n)</code> will therefore wait for all <code>n</code> bytes or
+return an error if the peer disconnects. That predictability keeps the protocol
+code simple.</p>
+<h3 id="25-build-checkpoint">2.5 Build checkpoint</h3>
+<p>🛠️ <strong>Checkpoint:</strong> After adding <code>TcpSocket</code> run
+<code>cmake --build build --target moonlapse_shared</code>. The target is header-only, but
+this quick build recompiles everything that includes <code>network.hpp</code> and ensures
+we did not miss an include or introduce a syntax error before wiring the
+listener.</p>
+<p>On failure every function returns <code>std::unexpected(SocketError{...})</code>. The
+server’s accept loop logs <code>error.message</code>, and the client UI stores the string
+to show the user after curses shuts down.</p>
+<hr />
+<h2 id="3-tcplistener-raii-for-bindlisten">3. <code>TcpListener</code>: RAII for <code>bind</code>/<code>listen</code></h2>
+<p>Servers construct a listener, bind it to an address, and accept clients. <code>TcpListener</code> mirrors that lifecycle.</p>
+<pre><code class="language-cpp">class TcpListener {
+public:
+  [[nodiscard]] static auto bind(std::string_view host, std::uint16_t port)
+      -&gt; SocketResult&lt;TcpListener&gt;;
+  [[nodiscard]] auto listen(int backlog = SOMAXCONN) const
+      -&gt; SocketResult&lt;void&gt;;
+  [[nodiscard]] auto accept() const -&gt; SocketResult&lt;TcpSocket&gt;;
+
+  void close() noexcept;
+  [[nodiscard]] auto isOpen() const noexcept -&gt; bool;
+};
+</code></pre>
+<p>Design notes:</p>
+<ul>
+<li><code>bind()</code> runs <code>ensureSocketLibrary()</code>, resolves the host/port, enables <code>SO_REUSEADDR</code>, and returns a listener that owns the native handle.</li>
+<li><code>listen()</code> fails fast if you call it on a closed listener.</li>
+<li><code>accept()</code> wraps the platform call and returns a new <code>TcpSocket</code> already in RAII form.</li>
+</ul>
+<blockquote>
+<p><strong>Ownership reminder:</strong> Just like <code>TcpSocket</code>, the listener’s destructor calls
+<code>close()</code>, so the operating system port is released the moment the object
+leaves scope. No separate <code>defer</code> or <code>finally</code> block is required.</p>
+</blockquote>
+<p>🧠 <strong>Concept note:</strong> <code>SOMAXCONN</code> is the OS-defined upper bound for the pending
+connection queue. Passing it through preserves the platform default while still
+allowing explicit tuning later.</p>
+<p>This separation keeps the server’s <code>main()</code> readable:</p>
+<pre><code class="language-cpp">auto listenerResult = TcpListener::bind(&quot;0.0.0.0&quot;, 40500);
+if (!listenerResult) {
+  std::println(&quot;[server] bind failed: {}&quot;, listenerResult.error().message);
+  return 1;
+}
+
+auto listenerInstance = std::move(listenerResult.value());
+if (auto listenResult = listenerInstance.listen(); !listenResult) {
+  std::println(&quot;[server] listen failed: {}&quot;, listenResult.error().message);
+  return 1;
+}
+</code></pre>
+<p>No manual cleanup is required—the RAII wrapper closes the socket on scope exit even if an early <code>return</code> fires.</p>
+<p>🛠️ <strong>Checkpoint:</strong> Build just the server now with
+<code>cmake --build build --target moonlapse_server</code>. If it fails, double-check the
+new include order in <code>server/main.cpp</code> and ensure you added <code>#include
+"network.hpp"</code> from the shared module.</p>
+<hr />
+<h2 id="4-wiring-sockets-into-the-server-loop">4. Wiring sockets into the server loop</h2>
+<p>Before the full game loop, sanity-check the wrappers with a minimal echo
+server. It accepts a single client, reads a header, and sends it straight back:</p>
+<pre><code class="language-cpp">auto listenerResult = TcpListener::bind(&quot;127.0.0.1&quot;, 40500);
+if (!listenerResult) {
+  throw std::runtime_error(listenerResult.error().message);
+}
+auto listener = std::move(listenerResult.value());
+listener.listen().value();
+while (true) {
+  auto connection = listener.accept();
+  if (!connection) {
+    std::println(&quot;[demo] accept failed: {}&quot;, connection.error().message);
+    continue;
+  }
+  auto socket = std::move(connection.value());
+  auto bytes = socket.receiveExact(Protocol::packetHeaderSize);
+  if (!bytes) {
+    std::println(&quot;[demo] read failed: {}&quot;, bytes.error().message);
+    continue;
+  }
+  socket.sendAll(std::span&lt;const std::byte&gt;{bytes.value()}).value();
+}
+</code></pre>
+<p>The pattern is the same everywhere: call a helper, check the
+<code>std::expected</code>, and only use <code>.value()</code> once you are sure the call succeeded.</p>
+<p>🧪 <strong>Try it:</strong> Drop that loop into a scratch executable under <code>server/tests/</code>
+if you want to watch <code>netcat</code> bounce packets back. It exercises both
+<code>receiveExact</code> and <code>sendAll</code> before we add concurrency.</p>
+<p>With the guardrails proven, the production <code>GameServer</code> thread-spawns
+<code>handleClient()</code> for every accepted connection:</p>
+<ol>
+<li>Receive a fixed-size header with <code>receiveExact(packetHeaderSize)</code>.</li>
+<li>Decode it using the §01 protocol helpers.</li>
+<li>Allocate and receive the payload with <code>receiveExact(payloadSize)</code>.</li>
+<li>Visit the decoded variant and dispatch to movement, chat, or snapshot handlers.</li>
+</ol>
+<p>Every step checks the returned <code>SocketResult</code>. An error triggers a break,
+closing the socket and removing the player from the registry.</p>
+<p><code>TcpSocket</code> itself does not implement internal locking—simultaneous <code>sendAll</code>
+calls from multiple threads would race on the underlying handle and interleave
+payloads. POSIX technically allows concurrent writes, but games want packet
+boundaries preserved, so we guard the send path with a <code>std::mutex</code>. The server
+wraps the socket inside a <code>Session</code> struct for that reason, while the global
+player table is protected by another mutex.</p>
+<p>🧠 <strong>Concept note:</strong> <code>std::scoped_lock</code> acquires every mutex passed to it and
+releases them automatically on scope exit. It is the multi-mutex, RAII-friendly
+successor to <code>std::lock_guard</code>.</p>
+<p>When broadcasting, we re-use the protocol encoder and the session wrapper:</p>
+<pre><code class="language-cpp">void broadcastChat(const Protocol::ChatPacket&amp; chat) {
+  auto encoded = Protocol::encode(chat);
+  auto recipients = snapshotSessions();
+
+  for (const auto&amp; recipient : recipients) {
+    if (!recipient) {
+      continue;
+    }
+    if (auto result = recipient-&gt;send(std::span&lt;const std::byte&gt;{encoded});
+        !result) {
+      std::println(&quot;[server] chat broadcast failed for player {}: {}&quot;,
+                   recipient-&gt;playerId, result.error().message);
+      removePlayer(recipient-&gt;playerId);
+    }
+  }
+}
+</code></pre>
+<p>Every failure becomes a structured <code>SocketError</code> with context. No raw errno checks clutter the gameplay code.</p>
+<p><code>snapshotSessions()</code> copies the shared pointers while holding the player mutex
+and releases the lock before sending, so long broadcasts never block new
+movement updates from being processed.</p>
+<p>🧠 <strong>Concept note:</strong> <code>std::visit</code> is the C++ equivalent of pattern-matching on a
+<code>std::variant</code>. The server builds an <code>Overloaded</code> helper (see <code>server/main.cpp</code>)
+so each lambda handles one packet alternative. Missing a case becomes a compile
+error the next time we extend <code>PacketVariant</code>.</p>
+<p>The receive loop also showcases idiomatic error propagation: <code>if (!result)
+return std::unexpected(result.error());</code> mirrors Go’s <code>if err != nil { return
+err }</code> and keeps failure paths explicit without exceptions.</p>
+<hr />
+<h2 id="5-feeding-the-client-from-a-receiver-thread">5. Feeding the client from a receiver thread</h2>
+<p>The client mirrors the server’s read loop inside <code>receiverLoop</code> (a <code>std::jthread</code>):</p>
+<pre><code class="language-cpp">void receiverLoop(const std::shared_ptr&lt;TcpSocket&gt;&amp; socket, ClientState&amp; state,
+                  std::atomic_bool&amp; running,
+                  std::atomic_bool&amp; connectionActive,
+                  std::mutex&amp; errorMutex, std::string&amp; lastError) {
+  while (running.load()) {
+    auto headerBytes = socket-&gt;receiveExact(Protocol::packetHeaderSize);
+    if (!headerBytes) {
+      std::scoped_lock guard{errorMutex};
+      lastError = headerBytes.error().message;
+      connectionActive.store(false);
+      running.store(false);
+      return;
+    }
+    // ... decode header, receive payload, std::visit the packet variant ...
+  }
+}
+</code></pre>
+<p>🧠 <strong>Concept note:</strong> <code>std::jthread</code> automatically joins in its destructor and
+exposes a <code>std::stop_token</code>. You no longer need to remember to call <code>join()</code> in
+every exit path—the object handles cooperative shutdown for you.</p>
+<p>Because <code>TcpSocket</code> must stay alive while both the UI loop and the receiver
+loop run, we wrap it in <code>std::shared_ptr</code>. Neither thread is the clear “owner,”
+so shared ownership ensures the socket only closes once both references drop
+out of scope. We still guard the actual send path with a mutex; shared pointers
+manage lifetime, not thread safety.</p>
+<blockquote>
+<p><strong>Analogy:</strong> In Go you might pass a pointer to a goroutine and trust the GC to
+keep it alive. In C++ we explicitly model shared lifetime with
+<code>std::shared_ptr</code>, and the runtime deletes the socket as soon as the last
+reference disappears.</p>
+</blockquote>
+<p>The receiver thread stops gracefully by observing an atomic <code>running</code> flag and
+by calling <code>receiver.request_stop()</code> when the main loop exits. Any error gets
+stored in <code>lastError</code> under a mutex, then shown in the UI after curses shuts
+down.</p>
+<p>On exit, the client shuts down and closes the socket explicitly. The destructor would run anyway, but calling <code>shutdown()</code> tells the peer that no more data will be sent, reducing the chance of lingering half-closed connections.</p>
+<hr />
+<h2 id="6-handling-errors-without-exceptions">6. Handling errors without exceptions</h2>
+<p>The networking layer never throws. Every public method returns <code>SocketResult&lt;T&gt;</code>. Higher layers translate these into user-facing logs or UI messages.</p>
+<ul>
+<li>Server: <code>std::println("[server] accept failed: {}", error.message);</code></li>
+<li>Client: stash the message in <code>lastError</code> and display it after curses tears down.</li>
+</ul>
+<p><code>SocketError</code> always carries three fields: a domain-specific <code>SocketErrorCode</code>, a human-readable message, and the original <code>std::error_code</code> for deeper inspection or logging. That keeps debugging straightforward—especially useful when a failure happens on Windows but not on Linux.</p>
+<blockquote>
+<p><strong>Why not just <code>std::error_code</code>?</strong> The extra enum lets higher layers branch
+on semantic states (e.g., <code>ConnectionClosed</code> vs <code>WouldBlock</code>) without parsing
+strings, while the embedded <code>std::error_code</code> preserves the OS-specific
+details for logs.</p>
+</blockquote>
+<hr />
+<h2 id="7-checklist-before-moving-on">7. Checklist before moving on</h2>
+<ul>
+<li>[x] <code>shared/network.hpp</code> exposes <code>TcpSocket</code> and <code>TcpListener</code> as move-only RAII wrappers.</li>
+<li>[x] All networking functions return <code>SocketResult&lt;T&gt;</code> with rich error information.</li>
+<li>[x] Client and server use <code>receiveExact()</code> and <code>sendAll()</code> to avoid partial-transfer bugs.</li>
+<li>[x] Server sessions guard outgoing sends with a mutex; client guards chat/movement sends similarly.</li>
+<li>[x] Threads use <code>std::jthread</code> and atomic flags for cooperative shutdown.</li>
+</ul>
+<p>With packets and sockets in place the pipeline is complete: the server accepts clients, decodes movement commands, and broadcasts consistent snapshots; the client renders the shared state and relays chat. In §03 we will turn to the terminal UI and input handling: rendering the grid, managing chat focus, and keeping the frame loop responsive without wasting CPU.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,939 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../04_curses_client/">
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.23">
+    
+    
+      
+        <title>Ship and Extend - Moonlapse Tutorials</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.84d31ad4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#05-ship-it-and-extend-it" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Moonlapse Tutorials" class="md-header__button md-logo" aria-label="Moonlapse Tutorials" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Moonlapse Tutorials
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Ship and Extend
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Moonlapse Tutorials" class="md-nav__button md-logo" aria-label="Moonlapse Tutorials" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Moonlapse Tutorials
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../00_build_modern_curses_mmo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Build Modern Curses MMO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01_shared_protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Shared Protocol
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02_networking_layer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Networking Layer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03_authoritative_server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Authoritative Server
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04_curses_client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Curses Client
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Ship and Extend
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Ship and Extend
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-building-every-target" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Building every target
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Building every target">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-optional-compile-commands-for-tooling" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1 Optional: compile commands for tooling
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-running-server-and-clients-together" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Running server and clients together
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Running server and clients together">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-verifying-end-to-end-behaviour" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1 Verifying end-to-end behaviour
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-testing-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Testing strategy
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Testing strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-sanitizers-and-static-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1 Sanitizers and static analysis
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-deployment-and-packaging" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Deployment and packaging
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-where-to-go-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Where to go next
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Where to go next">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-gameplay-ideas" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.1 Gameplay ideas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-networking-polish" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.2 Networking polish
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-testing-and-ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.3 Testing and CI
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-ui-improvements" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.4 UI improvements
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-what-you-learned" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. What you learned
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-checklist-recap" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Checklist recap
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-building-every-target" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Building every target
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Building every target">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-optional-compile-commands-for-tooling" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1 Optional: compile commands for tooling
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-running-server-and-clients-together" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Running server and clients together
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Running server and clients together">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-verifying-end-to-end-behaviour" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1 Verifying end-to-end behaviour
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-testing-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Testing strategy
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Testing strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-sanitizers-and-static-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1 Sanitizers and static analysis
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-deployment-and-packaging" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Deployment and packaging
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-where-to-go-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Where to go next
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Where to go next">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-gameplay-ideas" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.1 Gameplay ideas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-networking-polish" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.2 Networking polish
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-testing-and-ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.3 Testing and CI
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-ui-improvements" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.4 UI improvements
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-what-you-learned" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. What you learned
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-checklist-recap" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Checklist recap
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="05-ship-it-and-extend-it">§05 Ship It and Extend It</h1>
+<p>We now have a functioning terminal MMO: protocol helpers (§01), portable sockets (§02), an authoritative server (§03), and a curses client (§04). This final chapter ties the project together with build/test tips, end-to-end run instructions, and ideas for expanding the game while keeping the codebase maintainable.</p>
+<hr />
+<h2 id="1-building-every-target">1. Building every target</h2>
+<p>The root <code>CMakeLists.txt</code> wires together <code>shared</code>, <code>server</code>, and <code>client</code>. After configuring (<code>cmake -S . -B build</code>), rebuild everything with:</p>
+<pre><code class="language-bash">cmake --build build
+</code></pre>
+<p>Useful single-target builds when iterating locally:</p>
+<pre><code class="language-bash">cmake --build build --target moonlapse_shared
+cmake --build build --target moonlapse_server
+cmake --build build --target moonlapse_client
+</code></pre>
+<p>When <code>shared/packets.hpp</code> changes, rebuild the shared library first so dependent targets pick up new headers.</p>
+<h3 id="11-optional-compile-commands-for-tooling">1.1 Optional: compile commands for tooling</h3>
+<p>The top-level <code>CMakeLists.txt</code> enables <code>CMAKE_EXPORT_COMPILE_COMMANDS</code>, so tools like clangd and clang-tidy can ingest <code>build/compile_commands.json</code> directly. This file is a universal manifest of compiler flags and include paths. Point VS Code, CLion, or Neovim’s clangd extension at it and you get accurate completions, diagnostics, and cross references without hand-maintaining settings—a quality-of-life boost compared with the guesswork older C++ workflows required.</p>
+<hr />
+<h2 id="2-running-server-and-clients-together">2. Running server and clients together</h2>
+<p>In separate terminals:</p>
+<pre><code class="language-bash">./build/server/moonlapse_server
+./build/client/moonlapse_client
+</code></pre>
+<p>The server logs connections, packet errors, and disconnects. Each client renders the grid, shows chat entries, and exits gracefully on <code>q</code>. You can run multiple clients from the same machine—the server assigns unique IDs and positions using <code>spawnPosition()</code>.</p>
+<h3 id="21-verifying-end-to-end-behaviour">2.1 Verifying end-to-end behaviour</h3>
+<p>Try this workflow after every major change:</p>
+<ol>
+<li>Start the server.</li>
+<li>Launch two clients.</li>
+<li>Move each avatar across the grid; confirm both screens update.</li>
+<li>Type chat messages in each client; confirm they appear in both logs.</li>
+<li>Close one client; verify the other still runs and the server logs the disconnect cleanly.</li>
+</ol>
+<p>Any failure should surface either in the server logs or in the client’s terminal output after curses shuts down.</p>
+<hr />
+<h2 id="3-testing-strategy">3. Testing strategy</h2>
+<p>We kept the runtime simple, but the architecture invites targeted tests:</p>
+<ul>
+<li><strong>Shared protocol:</strong> add <code>shared/tests/protocol_roundtrip.cpp</code> and link against <code>moonlapse_shared</code>. Doctest or Catch2 work well. Focus on boundary cases: truncated headers, invalid directions, oversize chat payloads.</li>
+<li><strong>Server logic:</strong> extract pure helpers (<code>applyMovement</code>, <code>spawnPosition</code>) into their own file for unit tests. For integration, consider spinning up the server in a test harness, then driving it with sockets using std::thread.</li>
+<li><strong>Client render helpers:</strong> treat them as pure functions (they already are). If you want automated coverage, abstract the curses calls behind an interface so tests can assert on a fake framebuffer. For now, manual testing plus sanitizers is sufficient.</li>
+</ul>
+<p>Example doctest for the movement packet round-trip:</p>
+<pre><code class="language-cpp">#include &lt;doctest/doctest.h&gt;
+#include &quot;packets.hpp&quot;
+
+TEST_CASE(&quot;movement packet round-trip&quot;) {
+    using Protocol::Direction;
+    using Protocol::MovementPacket;
+
+    const MovementPacket original{.player = 42, .direction = Direction::Left};
+    auto encoded = Protocol::encode(original);
+    auto header = Protocol::decodeHeader(std::span&lt;const std::byte&gt;{encoded});
+    REQUIRE(header);
+    auto payload = std::span&lt;const std::byte&gt;{encoded}.subspan(Protocol::packetHeaderSize);
+    auto decoded = Protocol::decodePacket(*header, payload);
+    REQUIRE(decoded);
+    REQUIRE(std::holds_alternative&lt;MovementPacket&gt;(decoded.value()));
+    const auto &amp;restored = std::get&lt;MovementPacket&gt;(decoded.value());
+    CHECK(restored.player == original.player);
+    CHECK(restored.direction == original.direction);
+}
+</code></pre>
+<p>Drop this under <code>shared/tests/</code>, add a CMake target that links against <code>moonlapse_shared</code>, and wire it into CI so protocol regressions fail fast.</p>
+<h3 id="31-sanitizers-and-static-analysis">3.1 Sanitizers and static analysis</h3>
+<p>Coming from Go or Python, the runtime guards you against use-after-free and
+buffer overflows. In C++ you lean on <strong>sanitizers</strong> instead—they insert
+aggressive runtime checks that catch memory and UB bugs the moment they occur.</p>
+<p>Add an option near the top of your root <code>CMakeLists.txt</code>:</p>
+<pre><code class="language-cmake">option(MOONLAPSE_ENABLE_SANITIZERS &quot;Enable address/UB sanitizers&quot; OFF)
+if(MOONLAPSE_ENABLE_SANITIZERS AND CMAKE_CXX_COMPILER_ID MATCHES &quot;Clang|GNU&quot;)
+    add_compile_options(-fsanitize=address,undefined -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=address,undefined)
+endif()
+</code></pre>
+<p>Then configure a dedicated build when you want the extra checks:</p>
+<pre><code class="language-bash">cmake -S . -B build-sanitize -DMOONLAPSE_ENABLE_SANITIZERS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --build build-sanitize
+</code></pre>
+<p>Pair that with <code>clang-tidy</code> (either via your editor or a dedicated CMake
+target) to flag stylistic or API usage issues before they reach <code>main</code>.</p>
+<hr />
+<h2 id="4-deployment-and-packaging">4. Deployment and packaging</h2>
+<p>The server and client are single binaries with minimal dependencies:</p>
+<ul>
+<li>For Linux/macOS, ensure <code>ncurses</code> is installed (e.g., <code>apt-get install libncurses5-dev</code> or <code>brew install ncurses</code>).</li>
+<li>On Windows, bundle PDCurses (already handled in <code>client/CMakeLists.txt</code>) and ship the <code>.exe</code> alongside <code>pdcurses.dll</code> if necessary.</li>
+<li>Ship the server with a simple systemd service or a Docker container. Since the process is lightweight, a single core handles small rooms easily.</li>
+</ul>
+<p>When distributing builds, provide a README snippet with the same run commands from §2.</p>
+<hr />
+<h2 id="5-where-to-go-next">5. Where to go next</h2>
+<p>The architecture leaves plenty of room to grow. Stick to the shared protocol + RAII foundations and you can add features without fighting the existing code.</p>
+<h3 id="51-gameplay-ideas">5.1 Gameplay ideas</h3>
+<ol>
+<li><strong>Diagonals and speed:</strong> extend <code>Protocol::Direction</code> with diagonals; adjust <code>applyMovement()</code> accordingly.</li>
+<li><strong>Persistent chat history:</strong> add a server-side ring buffer and send it in <code>StateSnapshotPacket</code> (remember to update the checklist in <code>.github/instructions/add_new_packet.instructions.md</code>).</li>
+<li><strong>Rooms or channels:</strong> namespace players into rooms; include the room ID in movement/chat packets.</li>
+<li><strong>NPCs or obstacles:</strong> treat non-player entities as extra entries in the snapshot, maybe with distinct glyphs.</li>
+</ol>
+<p>Each feature will touch the shared protocol, server dispatch, and client rendering—use the packet checklist to stay consistent.</p>
+<p>That checklist lives in <code>.github/instructions/add_new_packet.instructions.md</code>.
+It walks through updating <code>PacketType</code>, encoding/decoding helpers, server
+dispatch, and client visitors so new wire formats stay synchronized across all
+three binaries.</p>
+<h3 id="52-networking-polish">5.2 Networking polish</h3>
+<ul>
+<li><strong>Non-blocking sockets:</strong> adjust <code>TcpSocket</code> to expose non-blocking mode and integrate polling (epoll/kqueue) for scaling past handfuls of clients.</li>
+<li><strong>TLS support:</strong> wrap sockets with an mbedTLS or OpenSSL RAII layer.</li>
+<li><strong>Heartbeat/ping:</strong> add a timer thread that sends heartbeat packets and drops idle clients.</li>
+</ul>
+<h3 id="53-testing-and-ci">5.3 Testing and CI</h3>
+<p>Because the shared protocol, server helpers, and client rendering are decoupled,
+CI can exercise each layer independently. A minimal GitHub Actions workflow
+could:</p>
+<pre><code class="language-yaml">name: ci
+on: [push, pull_request]
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Configure
+                run: cmake -S . -B build
+            - name: Build
+                run: cmake --build build --target moonlapse_shared moonlapse_server moonlapse_client
+            - name: Protocol tests
+                run: ctest --test-dir build --output-on-failure
+</code></pre>
+<p>Layer on <code>clang-format</code>/<code>clang-tidy</code> steps or a sanitizer build as needed. The
+goal is to keep the protocol and state-management guarantees verifiable on
+every push, so feature work never silently drifts from the design we built in
+§§01–04.</p>
+<h3 id="54-ui-improvements">5.4 UI improvements</h3>
+<ul>
+<li><strong>Color and animations:</strong> curses supports color pairs—highlight the local player or chat mentions.</li>
+<li><strong>Scrolling chat:</strong> increase <code>maxChatMessages</code> and add page-up/page-down navigation.</li>
+<li><strong>Command palette:</strong> Adopt a slash-command system (<code>/nick</code>, <code>/whisper</code>, etc.) by extending the protocol.</li>
+</ul>
+<hr />
+<h2 id="6-what-you-learned">6. What you learned</h2>
+<ul>
+<li>RAII wrappers (<code>TcpSocket</code>, <code>CursesSession</code>) give deterministic cleanup across
+    OS APIs, replacing manual <code>close()</code> calls.</li>
+<li><code>std::expected</code>, <code>std::variant</code>, and visitors keep protocol flows explicit and
+    type-safe.</li>
+<li>Thread ownership is spelled with <code>std::jthread</code>, <code>std::shared_ptr</code>, mutexes,
+    and atomics—always pairing blocking I/O with clear lifetime rules.</li>
+<li>Modern CMake (targets, <code>compile_commands.json</code>, sanitizer toggles) removes the
+    friction of “big C++” builds and makes IDE integration dependable.</li>
+</ul>
+<h2 id="7-checklist-recap">7. Checklist recap</h2>
+<ul>
+<li>[x] Build instructions cover all targets and tooling hooks.</li>
+<li>[x] Runbook demonstrates the full server + multi-client workflow.</li>
+<li>[x] Testing guidance highlights shared protocol tests and sanitizer setup.</li>
+<li>[x] Deployment section notes platform dependencies.</li>
+<li>[x] Extension ideas map to concrete protocol/server/client changes.</li>
+</ul>
+<p>Thank you for following along. You now have a modern C++23 codebase that demonstrates RAII, safe networking, and a curses UI working in concert. Keep the packet checklist handy, lean on <code>std::expected</code> when adding error paths, and continue building features one module at a time. Happy hacking! </p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

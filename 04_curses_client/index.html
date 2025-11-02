@@ -1,0 +1,1242 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../03_authoritative_server/">
+      
+      
+        <link rel="next" href="../05_ship_and_extend/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.23">
+    
+    
+      
+        <title>Curses Client - Moonlapse Tutorials</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.84d31ad4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#04-crafting-the-curses-client-frontend" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Moonlapse Tutorials" class="md-header__button md-logo" aria-label="Moonlapse Tutorials" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Moonlapse Tutorials
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Curses Client
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Moonlapse Tutorials" class="md-nav__button md-logo" aria-label="Moonlapse Tutorials" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Moonlapse Tutorials
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../00_build_modern_curses_mmo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Build Modern Curses MMO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01_shared_protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Shared Protocol
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02_networking_layer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Networking Layer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03_authoritative_server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Authoritative Server
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Curses Client
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Curses Client
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-bootstrapping-the-client-runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Bootstrapping the client runtime
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-curses-session-as-raii" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. The curses session as RAII
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-local-state-and-render-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Local state and render pipeline
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Local state and render pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-drawing-the-grid" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1 Drawing the grid
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-input-handling-and-packet-sends" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Input handling and packet sends
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Input handling and packet sends">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-movement-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.1 Movement keys
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-chat-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.2 Chat mode
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-receiver-thread-keeping-state-fresh" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Receiver thread: keeping state fresh
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Receiver thread: keeping state fresh">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-handling-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.1 Handling failures
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-try-it-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Try it now
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Checklist
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05_ship_and_extend/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Ship and Extend
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-bootstrapping-the-client-runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Bootstrapping the client runtime
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-curses-session-as-raii" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. The curses session as RAII
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-local-state-and-render-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Local state and render pipeline
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Local state and render pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-drawing-the-grid" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1 Drawing the grid
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-input-handling-and-packet-sends" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Input handling and packet sends
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Input handling and packet sends">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-movement-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.1 Movement keys
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-chat-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.2 Chat mode
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-receiver-thread-keeping-state-fresh" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Receiver thread: keeping state fresh
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Receiver thread: keeping state fresh">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-handling-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.1 Handling failures
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-try-it-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Try it now
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Checklist
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="04-crafting-the-curses-client-frontend">§04 Crafting the Curses Client Frontend</h1>
+<p>With the server orchestrating the world (§03) we now turn to the terminal client. This chapter shows how <code>client/main.cpp</code> knits together three threads of work:</p>
+<ol>
+<li>a curses front-end that renders the grid and chat log,</li>
+<li>an input loop that captures movement and chat commands,</li>
+<li>a receiver thread that hydrates local state from authoritative snapshots.</li>
+</ol>
+<p>Everything runs on top of the shared protocol (§01) and networking layer (§02), so the client stays thin—no business logic, just presentation plus packet plumbing.</p>
+<hr />
+<h2 id="1-bootstrapping-the-client-runtime">1. Bootstrapping the client runtime</h2>
+<p>We start by connecting to the server, bringing up curses safely, and initialising the shared state objects that threads will share.</p>
+<pre><code>Main thread (UI &amp; input)
+  ├─ polls getch(), sends packets, draws frames
+Receiver thread (std::jthread)
+  └─ blocks on receiveExact(), updates ClientState
+</code></pre>
+<pre><code class="language-cpp">constexpr std::string_view serverAddress = &quot;127.0.0.1&quot;;
+constexpr std::uint16_t serverPort = 40500;
+
+auto main() -&gt; int {
+  auto socketResult = TcpSocket::connect(serverAddress, serverPort);
+  if (!socketResult) {
+    std::println(&quot;[client] failed to connect: {}&quot;,
+                 socketResult.error().message);
+    return 1;
+  }
+
+  auto connection =
+      std::make_shared&lt;TcpSocket&gt;(std::move(socketResult.value()));
+  std::string lastError;
+
+  🧠 **Concept note:** The shared objects fall into four distinct roles. The
+  `std::shared_ptr&lt;TcpSocket&gt;` keeps the connection alive while both the input
+  loop and receiver thread use it. `ClientState` (protected by its internal mutex)
+  stores gameplay data that both threads read and write. Two
+  `std::atomic_bool` flags provide lock-free coordination for cooperative
+  shutdown, and `errorMutex` guards `lastError`, the string we surface to the
+  user after curses shuts down.
+
+  {
+    CursesSession curses;
+    if (!curses.active) {
+      std::println(&quot;[client] failed to initialize terminal UI&quot;);
+      return 1;
+    }
+
+    ClientState state;
+    std::atomic_bool running{true};
+    std::atomic_bool connectionActive{true};
+    std::mutex errorMutex;
+    std::mutex sendMutex;
+
+    std::jthread receiver(receiverLoop, connection, std::ref(state),
+                          std::ref(running), std::ref(connectionActive),
+                          std::ref(errorMutex), std::ref(lastError));
+
+    ChatUiState chatState;
+    RuntimeContext runtime{sendMutex, errorMutex, lastError, running,
+                           connectionActive};
+
+    while (running.load()) {
+      if (!connectionActive.load()) {
+        break;
+      }
+
+      auto inputKey = getch();
+      if (handleInputKey(inputKey, chatState, connection, state, runtime) ==
+          LoopAction::Stop) {
+        break;
+      }
+
+      auto renderState = gatherRenderState(state);
+      drawFrame(renderState.snapshot, renderState.selfId,
+                std::span&lt;const ChatEntry&gt;{renderState.chatMessages},
+                chatState);
+      std::this_thread::sleep_for(refreshDelay);
+    }
+
+    running.store(false);
+    connectionActive.store(false);
+    receiver.request_stop();
+    receiver.join();
+
+    connection-&gt;shutdown();
+    connection-&gt;close();
+  }
+
+  if (!lastError.empty()) {
+    std::println(&quot;[client] {}&quot;, lastError);
+  }
+
+  return 0;
+}
+</code></pre>
+<p>Highlights:</p>
+<ul>
+<li><code>TcpSocket::connect()</code> and the RAII shutdown mirror the server patterns.</li>
+<li><code>CursesSession</code> guards terminal state; leaving the scope tears down curses cleanly.</li>
+<li>Shared state lives in <code>ClientState</code>, guarded by a mutex.</li>
+<li>Atomic flags (<code>running</code>, <code>connectionActive</code>) coordinate the input loop with the receiver thread.</li>
+<li><code>RuntimeContext</code> bundles references so helpers can log errors and trigger shutdowns without globals.</li>
+<li><code>std::this_thread::sleep_for(refreshDelay)</code> yields the UI thread so we do not
+  busy-spin when no input arrives.</li>
+</ul>
+<p>🧠 <strong>Concept note:</strong> The shared objects fall into four distinct roles. The
+<code>std::shared_ptr&lt;TcpSocket&gt;</code> keeps the connection alive while both the input
+loop and receiver thread use it. <code>ClientState</code> (protected by its internal mutex)
+stores gameplay data that both threads read and write. Two
+<code>std::atomic_bool</code> flags provide lock-free coordination for cooperative</p>
+<pre><code>            🧠 **Concept note:** Curses exposes a process-wide singleton. Limiting
+            `CursesSession` to a single, non-movable owner guarantees `endwin()` runs at
+            most once—even if an exception or early `return` occurs.
+</code></pre>
+<p>shutdown, and <code>errorMutex</code> guards <code>lastError</code>, the string we surface to the
+user after curses shuts down.</p>
+<p>🧠 <strong>Concept note:</strong> <code>std::ref(...)</code> wraps arguments in a reference wrapper so
+the <code>std::jthread</code> constructor passes the original object to <code>receiverLoop</code>
+instead of copying it. Without <code>std::ref</code>, the thread would see its own private
+copy of <code>ClientState</code>, <code>running</code>, and <code>lastError</code>, and changes would never make
+it back to the main loop.</p>
+<hr />
+<h2 id="2-the-curses-session-as-raii">2. The curses session as RAII</h2>
+<p>Curses requires matching <code>initscr()</code>/<code>endwin()</code> calls. We wrap that requirement in a move-proof RAII struct so the rest of the code can treat curses like any other resource.</p>
+<pre><code class="language-cpp">struct CursesSession {
+  CursesSession() : window{initscr()} {
+    if (window == nullptr) {
+      return;
+    }
+    active = true;
+    cbreak();
+    noecho();
+    keypad(window, true);
+    nodelay(window, true);
+    curs_set(0);
+  }
+
+  ~CursesSession() {
+    if (active) {
+      endwin();
+    }
+  }
+
+  CursesSession(const CursesSession&amp;) = delete;
+  auto operator=(const CursesSession&amp;) -&gt; CursesSession&amp; = delete;
+  CursesSession(CursesSession&amp;&amp;) = delete;
+  auto operator=(CursesSession&amp;&amp;) -&gt; CursesSession&amp; = delete;
+
+  WINDOW* window{};
+  bool active{false};
+};
+</code></pre>
+<p>The constructor configures a non-blocking UI (<code>nodelay</code>) and disables echo so we can manage the cursor ourselves. The type is intentionally non-movable; owning the curses session twice would lead to double-shutdown bugs.</p>
+<hr />
+<h2 id="3-local-state-and-render-pipeline">3. Local state and render pipeline</h2>
+<p><code>ClientState</code> stores the authoritative snapshot as last received plus chat history. Rendering extracts immutable copies so we never hold the mutex during drawing.</p>
+<pre><code class="language-cpp">struct ChatEntry {
+  Protocol::PlayerId player{};
+  std::string message;
+};
+
+struct ChatUiState {
+  bool active{false};
+  std::string input;
+};
+
+struct ClientState {
+  std::unordered_map&lt;Protocol::PlayerId, Protocol::Position&gt; players;
+  std::optional&lt;Protocol::PlayerId&gt; selfId;
+  std::deque&lt;ChatEntry&gt; chatLog;
+  mutable std::mutex mutex;
+};
+
+struct RenderState {
+  std::vector&lt;Protocol::PlayerState&gt; snapshot;
+  std::vector&lt;ChatEntry&gt; chatMessages;
+  std::optional&lt;Protocol::PlayerId&gt; selfId;
+};
+
+🧠 **Concept note:** `std::optional` gives us an explicit “maybe” value without
+resorting to sentinel IDs like `0` or `-1`. When `selfId` lacks a value, the
+client simply has not received its focus packet yet.
+
+🧠 **Concept note:** We keep chat history in `std::deque` so pushing new entries
+and trimming old ones stay `O(1)` at both ends. Snapshots copy into
+`std::vector` because we iterate them linearly when drawing the grid.
+</code></pre>
+<p><code>gatherRenderState()</code> copies the data out under lock:</p>
+<pre><code class="language-cpp">auto gatherRenderState(ClientState&amp; state) -&gt; RenderState {
+  RenderState render;
+  std::scoped_lock guard{state.mutex};
+
+  render.snapshot.reserve(state.players.size());
+  for (const auto&amp; [playerIdentifier, position] : state.players) {
+    render.snapshot.emplace_back(Protocol::PlayerState{
+        .player = playerIdentifier, .position = position});
+  }
+
+  render.chatMessages.reserve(state.chatLog.size());
+  for (const auto&amp; entry : state.chatLog) {
+    render.chatMessages.push_back(entry);
+  }
+
+  render.selfId = state.selfId;
+  return render;
+}
+
+🧠 **Concept note:** The render pipeline follows the *lock, copy, release*
+pattern. We hold the mutex only long enough to snapshot the data, then draw from
+immutable copies. Slow terminal I/O can never stall the receiver thread that
+keeps `ClientState` fresh.
+</code></pre>
+<h3 id="31-drawing-the-grid">3.1 Drawing the grid</h3>
+<p>The draw helpers translate <code>RenderState</code> into curses calls. They are pure functions with no shared state, making them easy to reason about.</p>
+<pre><code class="language-cpp">void drawBorder() {
+  for (int row = 0; row &lt;= gridHeight + 1; ++row) {
+    for (int column = 0; column &lt;= gridWidth + 1; ++column) {
+      const bool borderCell = row == 0 || row == gridHeight + 1 ||
+                              column == 0 || column == gridWidth + 1;
+      const auto glyph = static_cast&lt;unsigned char&gt;(borderCell ? '#' : ' ');
+      mvaddch(row, column, static_cast&lt;chtype&gt;(glyph));
+    }
+  }
+}
+</code></pre>
+<p><code>drawPlayers()</code> highlights the local player with <code>@</code> and renders others as <code>o</code>. The function clamps coordinates defensively in case future gameplay tweaks move players off-grid.</p>
+<pre><code class="language-cpp">void drawPlayers(const std::vector&lt;Protocol::PlayerState&gt;&amp; snapshot,
+                 std::optional&lt;Protocol::PlayerId&gt; selfId) {
+  for (const auto&amp; player : snapshot) {
+    auto positionRow = static_cast&lt;int&gt;(player.position.y) + 1;
+    auto positionColumn = static_cast&lt;int&gt;(player.position.x) + 1;
+    if (positionColumn &lt; 1 || positionColumn &gt; gridWidth || positionRow &lt; 1 ||
+        positionRow &gt; gridHeight) {
+      continue;
+    }
+    const bool isSelf = selfId.has_value() &amp;&amp; player.player == *selfId;
+    const auto glyph = static_cast&lt;unsigned char&gt;(isSelf ? '@' : 'o');
+    mvaddch(positionRow, positionColumn, static_cast&lt;chtype&gt;(glyph));
+  }
+}
+</code></pre>
+<p>The rest of the UI is simple text: controls hint, player ID, chat log, and an input prompt with a trailing underscore when the chat box has focus. We assemble it all inside <code>drawFrame()</code>:</p>
+<pre><code class="language-cpp">void drawFrame(const std::vector&lt;Protocol::PlayerState&gt;&amp; snapshot,
+               std::optional&lt;Protocol::PlayerId&gt; selfId,
+               std::span&lt;const ChatEntry&gt; chatMessages,
+               const ChatUiState&amp; chatUi) {
+  erase();
+  drawBorder();
+  drawPlayers(snapshot, selfId);
+  auto nextRow = drawInfoLines(selfId, chatUi);
+  nextRow = drawChatLog(nextRow, chatMessages);
+  drawChatPrompt(nextRow, chatUi);
+  refresh();
+}
+</code></pre>
+<p>Because curses is immediate-mode, we redraw the whole frame each tick. The <code>refreshDelay</code> constant (50 ms) throttles the loop to keep CPU usage reasonable.</p>
+<p>🧠 <strong>Concept note:</strong> Immediate-mode means the screen is just another buffer.
+Every frame we paint the full scene, then <code>refresh()</code> flushes it. All of the
+timing constants—<code>gridWidth</code>, <code>gridHeight</code>, <code>refreshDelay</code>, and key codes like
+<code>escapeKeyCode</code>—are defined near the top of <code>client/main.cpp</code> so tweaking the UI
+never requires hunting through the tutorial.</p>
+<blockquote>
+<p>The helper functions referenced here—<code>drawInfoLines</code>, <code>drawChatLog</code>,
+<code>drawChatPrompt</code>, and the key constants—live alongside the snippet in
+<code>client/main.cpp</code>. They are thin wrappers over curses primitives in the same
+style as <code>drawBorder()</code>.</p>
+</blockquote>
+<hr />
+<h2 id="4-input-handling-and-packet-sends">4. Input handling and packet sends</h2>
+<p>Input is split into two modes: movement (default) and chat (activated with the Enter key). We keep the logic modular with small helpers.</p>
+<pre><code class="language-cpp">enum class LoopAction : std::uint8_t { Continue, Stop };
+
+auto handleInputKey(int inputKey, ChatUiState&amp; chatState,
+                    const std::shared_ptr&lt;TcpSocket&gt;&amp; connection,
+                    ClientState&amp; state, RuntimeContext&amp; runtime)
+    -&gt; LoopAction {
+  if (inputKey == ERR) {
+    return LoopAction::Continue;
+  }
+
+  if (chatState.active) {
+    return handleChatInputKey(inputKey, chatState, connection, state, runtime);
+  }
+
+  return handleMovementInputKey(inputKey, chatState, connection, state,
+                                runtime);
+}
+</code></pre>
+<h3 id="41-movement-keys">4.1 Movement keys</h3>
+<p>Arrow keys map to <code>Protocol::Direction</code> values. The helper sends a movement packet guarded by the shared <code>sendMutex</code>.</p>
+<pre><code class="language-cpp">auto handleMovementInputKey(int inputKey, ChatUiState&amp; chatState,
+                            const std::shared_ptr&lt;TcpSocket&gt;&amp; connection,
+                            ClientState&amp; state, RuntimeContext&amp; runtime)
+    -&gt; LoopAction {
+  if (inputKey == 'q' || inputKey == 'Q') {
+    runtime.running.get().store(false);
+    return LoopAction::Stop;
+  }
+
+  if (inputKey == '\n' || inputKey == KEY_ENTER) {
+    chatState.active = true;
+    chatState.input.clear();
+    return LoopAction::Continue;
+  }
+
+  if (auto direction = keyToDirection(inputKey); direction) {
+    if (auto result = sendMovement(connection, state, *direction,
+                                   runtime.sendMutex.get());
+        !result) {
+      const auto failureMessage = result.error().message;
+      recordSocketFailure(runtime, failureMessage);
+      return LoopAction::Stop;
+    }
+  }
+
+  return LoopAction::Continue;
+}
+</code></pre>
+<p><code>keyToDirection()</code> simply maps curses key constants (<code>KEY_UP</code>, etc.) to the protocol enum. The actual send is handled by <code>sendMovement()</code>:</p>
+<pre><code class="language-cpp">auto sendMovement(const std::shared_ptr&lt;TcpSocket&gt;&amp; socket, ClientState&amp; state,
+                  Protocol::Direction direction, std::mutex&amp; sendMutex)
+    -&gt; SocketResult&lt;void&gt; {
+  std::optional&lt;Protocol::PlayerId&gt; playerIdentifier;
+  {
+    std::scoped_lock guard{state.mutex};
+    playerIdentifier = state.selfId;
+  }
+
+  if (!playerIdentifier) {
+    return {};
+  }
+
+  Protocol::MovementPacket packet{.player = *playerIdentifier,
+                                  .direction = direction};
+  auto encoded = Protocol::encode(packet);
+  std::scoped_lock guard{sendMutex};
+  return socket-&gt;sendAll(std::span&lt;const std::byte&gt;{encoded});
+}
+</code></pre>
+<p>We look up the local player ID under lock, build a packet, encode it with the shared protocol, and send it. If the ID is unknown (e.g., before the first snapshot arrives) the function returns early.</p>
+<p>🧠 <strong>Concept note:</strong> <code>RuntimeContext</code> is a lightweight bundle of references the
+handlers share. Passing one struct keeps the signatures tidy and avoids the
+global variables that are so common in traditional curses programs.</p>
+<h3 id="42-chat-mode">4.2 Chat mode</h3>
+<p>When chat mode is active, keystrokes append to the input string, handle backspace/delete, and submit with Enter.</p>
+<pre><code class="language-cpp">auto handleChatInputKey(int inputKey, ChatUiState&amp; chatState,
+                        const std::shared_ptr&lt;TcpSocket&gt;&amp; connection,
+                        ClientState&amp; state, RuntimeContext&amp; runtime)
+    -&gt; LoopAction {
+  switch (inputKey) {
+  case escapeKeyCode:
+    chatState.active = false;
+    chatState.input.clear();
+    return LoopAction::Continue;
+  case '\n':
+  case KEY_ENTER:
+    if (chatState.input.empty()) {
+      chatState.active = false;
+      return LoopAction::Continue;
+    }
+
+    if (auto result = sendChat(connection, state, chatState.input,
+                               runtime.sendMutex.get());
+        !result) {
+      const auto failureMessage = result.error().message;
+      recordSocketFailure(runtime, failureMessage);
+      return LoopAction::Stop;
+    }
+
+    chatState.input.clear();
+    chatState.active = false;
+    return LoopAction::Continue;
+  case KEY_BACKSPACE:
+  case deleteKeyCode:
+  case backspaceKeyCode:
+    if (!chatState.input.empty()) {
+      chatState.input.pop_back();
+    }
+    return LoopAction::Continue;
+  default:
+    if (inputKey &gt;= printableAsciiMin &amp;&amp; inputKey &lt;= printableAsciiMax &amp;&amp;
+        chatState.input.size() &lt; maxChatInputLength) {
+      chatState.input.push_back(static_cast&lt;char&gt;(inputKey));
+    }
+    return LoopAction::Continue;
+  }
+}
+</code></pre>
+<p><code>sendChat()</code> mirrors <code>sendMovement()</code>, encoding <code>Protocol::ChatPacket</code> and writing it under the send mutex. The chat log itself is capped at <code>maxChatMessages</code> to keep the UI tidy.</p>
+<hr />
+<h2 id="5-receiver-thread-keeping-state-fresh">5. Receiver thread: keeping state fresh</h2>
+<p><code>receiverLoop()</code> runs as a <code>std::jthread</code>, so its destructor requests stop automatically. The loop blocks on <code>receiveExact()</code> to pull headers and payloads from the server, then dispatches the decoded packets.</p>
+<pre><code class="language-cpp">void receiverLoop(const std::shared_ptr&lt;TcpSocket&gt;&amp; socket, ClientState&amp; state,
+                  std::atomic_bool&amp; running, std::atomic_bool&amp; connectionActive,
+                  std::mutex&amp; errorMutex, std::string&amp; lastError) {
+  while (running.load()) {
+    auto headerBytes = socket-&gt;receiveExact(Protocol::packetHeaderSize);
+    if (!headerBytes) {
+      {
+        std::scoped_lock guard{errorMutex};
+        lastError = headerBytes.error().message;
+      }
+      connectionActive.store(false);
+      running.store(false);
+      return;
+    }
+
+    auto headerResult =
+        Protocol::decodeHeader(std::span&lt;const std::byte&gt;{headerBytes.value()});
+    if (!headerResult) {
+      {
+        std::scoped_lock guard{errorMutex};
+        lastError = std::string{describePacketError(headerResult.error())};
+      }
+      connectionActive.store(false);
+      running.store(false);
+      return;
+    }
+
+    auto payloadBytes = socket-&gt;receiveExact(headerResult-&gt;payloadSize);
+    if (!payloadBytes) {
+      {
+        std::scoped_lock guard{errorMutex};
+        lastError = payloadBytes.error().message;
+      }
+      connectionActive.store(false);
+      running.store(false);
+      return;
+    }
+
+    auto packetResult = Protocol::decodePacket(
+        *headerResult, std::span&lt;const std::byte&gt;{payloadBytes.value()});
+    if (!packetResult) {
+      {
+        std::scoped_lock guard{errorMutex};
+        lastError = std::string{describePacketError(packetResult.error())};
+      }
+      connectionActive.store(false);
+      running.store(false);
+      return;
+    }
+
+    std::visit(Overloaded{
+                  [&amp;](const Protocol::StateSnapshotPacket&amp; snapshot) {
+                    handleSnapshot(state, snapshot);
+                  },
+                  [](const Protocol::MovementPacket&amp;) {
+                    // Movement packets are redundant; snapshots carry state.
+                  },
+                  [&amp;](const Protocol::ChatPacket&amp; chat) {
+                    handleChat(state, chat);
+                  }},
+               *packetResult);
+  }
+}
+</code></pre>
+<blockquote>
+<p><code>Overloaded</code> is the same helper introduced in §03—it aggregates lambdas so
+<code>std::visit</code> can route each packet type to the correct handler with compile
+time checks.</p>
+</blockquote>
+<p>🧠 <strong>Concept note:</strong> The receiver thread performs blocking I/O on purpose. It
+owns the socket read-side exclusively, so parking on <code>receiveExact()</code> keeps the
+design simple. When data arrives we update <code>ClientState</code>; when shutdown starts,
+the main thread calls <code>shutdown()</code> to break the wait.</p>
+<p>Two helpers mutate <code>ClientState</code> under lock:</p>
+<pre><code class="language-cpp">auto handleSnapshot(ClientState&amp; state,
+                    const Protocol::StateSnapshotPacket&amp; snapshot) -&gt; void {
+  std::unordered_map&lt;Protocol::PlayerId, Protocol::Position&gt; updated;
+  updated.reserve(snapshot.players.size());
+  for (const auto&amp; player : snapshot.players) {
+    updated.emplace(player.player, player.position);
+  }
+
+  std::scoped_lock guard{state.mutex};
+  state.players = std::move(updated);
+  if (snapshot.focusPlayer != 0) {
+    state.selfId = snapshot.focusPlayer;
+  }
+}
+
+auto handleChat(ClientState&amp; state, const Protocol::ChatPacket&amp; chat) -&gt; void {
+  ChatEntry entry{.player = chat.player, .message = chat.message};
+  std::scoped_lock guard{state.mutex};
+  state.chatLog.push_back(std::move(entry));
+  while (state.chatLog.size() &gt; maxChatMessages) {
+    state.chatLog.pop_front();
+  }
+}
+</code></pre>
+<p>Snapshots replace the entire position table to avoid drift. Chat messages append to a deque, trimming old entries once the cap is exceeded.</p>
+<h3 id="51-handling-failures">5.1 Handling failures</h3>
+<p>Any failure while receiving or decoding sets <code>lastError</code>, flips both atomic flags, and exits the loop. After curses shuts down, <code>main()</code> prints the final error (if any). This keeps the UI responsive even when the server disappears unexpectedly.</p>
+<p><code>recordSocketFailure()</code> provides the same failure path for send-side errors, so the whole runtime unwinds consistently.</p>
+<p>🧠 <strong>Concept note:</strong> Calling <code>connection-&gt;shutdown()</code> in <code>main()</code> wakes any
+thread blocked in <code>receiveExact()</code>. On POSIX it causes <code>recv()</code> to return <code>0</code> or
+<code>ECONNRESET</code>; on Windows it surfaces <code>WSAECONNRESET</code>. Either way the receiver
+thread notices, records the error, and stops without hanging.</p>
+<hr />
+<h2 id="6-try-it-now">6. Try it now</h2>
+<p>🛠️ <strong>Build checkpoint:</strong></p>
+<pre><code class="language-bash">cmake --build build --target moonlapse_client
+</code></pre>
+<p>With the server from §03 already running, launch the client:</p>
+<pre><code class="language-bash">./build/client/moonlapse_client
+</code></pre>
+<p>Use arrow keys to move, <code>Enter</code> to focus the chat box, type a short message, and
+press <code>Enter</code> again to send. <code>Esc</code> leaves chat mode, and <code>q</code> exits the client.</p>
+<p>📋 <strong>Sample log</strong></p>
+<pre><code>[client] failed to connect: connection refused   # when the server is down
+[client] connection closed by peer               # when the server exits cleanly
+</code></pre>
+<p>Seeing movement echoed across two client windows confirms the receiver thread,
+shared state, and rendering pipeline are in sync.</p>
+<hr />
+<h2 id="7-checklist">7. Checklist</h2>
+<ul>
+<li>[x] <code>CursesSession</code> wraps terminal setup/teardown with RAII.</li>
+<li>[x] <code>ClientState</code> stores player positions, self ID, and chat history behind a mutex.</li>
+<li>[x] Rendering copies state snapshots under lock, then draws without holding the mutex.</li>
+<li>[x] Input loop supports movement, chat input, and quit semantics.</li>
+<li>[x] Movement and chat packets reuse the shared protocol encoders.</li>
+<li>[x] Receiver thread decodes authoritative snapshots and updates local state atomically.</li>
+<li>[x] Errors propagate through <code>RuntimeContext</code>, shutting down cleanly and reporting to the user.</li>
+</ul>
+<p>At this point the “terminal MMO” is fully playable: run the server, launch two clients, and watch the grid update in real time. In §05 we will sew everything together with build/test workflows, plus suggestions for extending the game (animations, persistence, matchmaking, and beyond).</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

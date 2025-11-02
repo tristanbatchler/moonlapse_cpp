@@ -1,0 +1,891 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../01_shared_protocol/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.23">
+    
+    
+      
+        <title>Build Modern Curses MMO - Moonlapse Tutorials</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.84d31ad4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#00-build-a-modern-curses-mmo-with-idiomatic-safe-c23" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Moonlapse Tutorials" class="md-header__button md-logo" aria-label="Moonlapse Tutorials" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Moonlapse Tutorials
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Build Modern Curses MMO
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Moonlapse Tutorials" class="md-nav__button md-logo" aria-label="Moonlapse Tutorials" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Moonlapse Tutorials
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Build Modern Curses MMO
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Build Modern Curses MMO
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-big-picture-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Big-picture architecture
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-required-toolchain" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Required toolchain
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-a-modern-c-mindset" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. A modern C++ mindset
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. A modern C++ mindset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-value-first-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1 Value-first design
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-raii-everywhere" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.2 RAII everywhere
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-stdexpected-over-error-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.3 std::expected over error codes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-ranges-and-spans" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.4 Ranges and spans
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-cmake-primer-for-this-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. CMake primer for this project
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-how-to-read-modern-c-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. How to read modern C++ code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-what-comes-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. What comes next
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01_shared_protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Shared Protocol
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02_networking_layer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Networking Layer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03_authoritative_server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Authoritative Server
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04_curses_client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Curses Client
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05_ship_and_extend/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Ship and Extend
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-big-picture-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Big-picture architecture
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-required-toolchain" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Required toolchain
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-a-modern-c-mindset" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. A modern C++ mindset
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. A modern C++ mindset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-value-first-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1 Value-first design
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-raii-everywhere" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.2 RAII everywhere
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-stdexpected-over-error-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.3 std::expected over error codes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-ranges-and-spans" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.4 Ranges and spans
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-cmake-primer-for-this-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. CMake primer for this project
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-how-to-read-modern-c-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. How to read modern C++ code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-what-comes-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. What comes next
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="00-build-a-modern-curses-mmo-with-idiomatic-safe-c23">§00 Build a Modern Curses MMO with idiomatic, safe C++23</h1>
+<p>Welcome to the start of a hands-on series where we build a small multiplayer terminal game while learning the <em>modern</em> way to write C++23. If you already ship code in C, Go, or Python but feel uneasy about references, templates, or CMake files, this is for you. You will write real production-grade C++ as we go—no toy examples—and every concept earns its place in working code.</p>
+<p>We will grow a real project—the <code>moonlapse_cpp</code> codebase—step by step. Along the way you will learn how to:</p>
+<ul>
+<li>model packets and game state with strong types and value semantics,</li>
+<li>use RAII (Resource Acquisition Is Initialization) to keep sockets, threads, and terminal state safe,</li>
+<li>harness C++23 language and library features (concepts, <code>std::expected</code>, <code>std::jthread</code>, <code>&lt;print&gt;</code>),</li>
+<li>structure a CMake workspace that targets Linux and Windows with curses-based clients,</li>
+<li>keep server and client code testable and maintainable.</li>
+</ul>
+<p>This first instalment orients you, shows the tools we rely on, and highlights the C++ idioms you will meet repeatedly.</p>
+<blockquote>
+<p><strong>Try this now:</strong> skim the repository root and open <code>shared/packets.hpp</code> in your editor. Notice how every type lives inside a namespace and avoids raw pointers. Keep that file open while you read; we will refer to it often.</p>
+</blockquote>
+<hr />
+<h2 id="1-big-picture-architecture">1. Big-picture architecture</h2>
+<p><code>moonlapse_cpp</code> consists of three CMake targets. Each target compiles into its own executable or static library, but they share headers and idioms, just like a Go module with a shared package or a Rust workspace split into multiple crates.</p>
+<pre><code>project-root/
+├─ client/    # Terminal UI + input + client networking
+├─ server/    # Authoritative game state + broadcast
+└─ shared/    # Packets, protocol helpers, socket wrappers
+</code></pre>
+<p>The server listens for TCP connections, assigns players positions on a 2D grid, and broadcasts snapshots. The client is a curses-driven frontend that renders the grid and sends movement commands. The <code>shared</code> directory contains the protocol definitions and the networking abstraction we use on both sides.</p>
+<pre><code>##########################
+# @  o                 o #
+#                        #
+#           o            #
+##########################
+Chat&gt; hello world_
+</code></pre>
+<p>That snapshot is the end goal for the first milestone: two terminals, one server, all state synchronized.</p>
+<p>Unlike the classic C style of sprinkling manual <code>malloc</code> and <code>free</code>, we let objects manage their own lifetimes. That principle (RAII) underpins everything in this series.</p>
+<hr />
+<h2 id="2-required-toolchain">2. Required toolchain</h2>
+<p>You will need:</p>
+<ul>
+<li>A modern C++ compiler (Clang 17+, GCC 13+, or MSVC 2022) with full C++23 support.</li>
+<li>CMake ≥ 3.26.</li>
+<li><code>ncurses</code> (Linux/macOS) or PDCurses (Windows) for terminal rendering.</li>
+<li>A recent <code>clang-tidy</code> and <code>clang-format</code> to keep style consistent (optional but recommended).</li>
+</ul>
+<p>Install curses with your platform package manager:</p>
+<ul>
+<li><strong>Ubuntu/Debian:</strong> <code>sudo apt-get install libncurses5-dev</code></li>
+<li><strong>Fedora:</strong> <code>sudo dnf install ncurses-devel</code></li>
+<li><strong>macOS (Homebrew):</strong> <code>brew install ncurses</code></li>
+<li><strong>Windows:</strong> PDCurses is fetched automatically via CMake when you configure the project; ensure you generate either a Visual Studio or Ninja build.</li>
+</ul>
+<p>Clone the repository and generate a build tree:</p>
+<pre><code class="language-bash">cmake -S . -B build
+cmake --build build
+</code></pre>
+<p>If you are unsure about tool versions, double-check before the first configure step:</p>
+<pre><code class="language-bash">g++ --version
+clang++ --version
+cmake --version
+</code></pre>
+<p>On success you should see CMake finish with something like:</p>
+<pre><code>[100%] Linking CXX executable moonlapse_client
+[100%] Built target moonlapse_client
+</code></pre>
+<p>CMake uses <em>out-of-source</em> builds, so all generated files live inside <code>build/</code>. You can delete that directory at any time without touching your code.</p>
+<blockquote>
+<p><strong>Why CMake?</strong> Because CMake is all about <strong>targets, not variables</strong>. Each module declares only what it consumes (<code>target_link_libraries(client PRIVATE moonlapse_shared Threads::Threads ${CURSES_LIBRARIES})</code>) and CMake handles include paths, definitions, and platform-specific switches.</p>
+</blockquote>
+<p>⚠️ <strong>Common configure issues</strong></p>
+<ul>
+<li><em>Missing curses library:</em> install the package listed above, then rerun <code>cmake -S . -B build</code>.</li>
+<li><em>Old compiler:</em> GCC 13+ or Clang 17+ is required. On Ubuntu, <code>sudo apt-get install g++-13</code> and configure with <code>-DCMAKE_CXX_COMPILER=g++-13</code>.</li>
+<li><em>Windows SDK missing:</em> ensure you ran the “x64 Native Tools” developer prompt before configuring.</li>
+</ul>
+<hr />
+<h2 id="3-a-modern-c-mindset">3. A modern C++ mindset</h2>
+<p>Coming from C, Go, or Python, the most jarring differences in modern C++ are about <em>ownership</em> and <em>expression</em>. Modern C++ delivers deterministic memory safety <strong>without</strong> a garbage collector; RAII (Resource Acquisition Is Initialization) ensures resources release the moment they fall out of scope.</p>
+<h3 id="31-value-first-design">3.1 Value-first design</h3>
+<p>In <code>shared/packets.hpp</code> you will see structs like:</p>
+<pre><code class="language-cpp">struct MovementPacket {
+  PlayerId player{};
+  Direction direction{Direction::Up};
+};
+</code></pre>
+<p>This is plain old data, but we initialise members at the point of declaration and rely on aggregate initialisers (<code>MovementPacket packet{.player = id, .direction = dir};</code>). Values move efficiently when needed and copy when cheap. Value semantics make ownership explicit: you always know who owns what, and the compiler tells you when something is copied or moved.</p>
+<blockquote>
+<p><strong>Move semantics in one sentence:</strong> when a type is cheap to move but expensive to copy (e.g., <code>std::vector</code>), C++ lets you transfer ownership instead of duplicating data by calling <code>std::move</code>—the object on the right-hand side becomes “moved-from” but remains valid. We will call this out whenever the codebase relies on moves for efficiency.</p>
+</blockquote>
+<h3 id="32-raii-everywhere">3.2 RAII everywhere</h3>
+<p>Any resource—socket, thread, window—is wrapped in a type whose destructor releases it. For example, the client owns a <code>CursesSession</code>:</p>
+<pre><code class="language-cpp">struct CursesSession {
+  CursesSession() : window{initscr()} { /* configure curses */ }
+  ~CursesSession() { if (active) endwin(); }
+  // ...
+};
+</code></pre>
+<p>Once the object goes out of scope, we are guaranteed that <code>endwin()</code> runs, even during exceptions. No manual <code>finally</code> blocks required. In Go you would <code>defer endwin()</code>; in C++ the destructor plays that role automatically at the end of scope, giving you Go-like determinism without a runtime or GC.</p>
+<h3 id="33-stdexpected-over-error-codes">3.3 <code>std::expected</code> over error codes</h3>
+<p>Functions that can fail return <code>std::expected&lt;T, Error&gt;</code>. It behaves like Go’s <code>(value, error)</code> multiple return values or Rust’s <code>Result</code>, but the compiler enforces handling. The networking layer uses:</p>
+<pre><code class="language-cpp">using SocketResult&lt;T&gt; = std::expected&lt;T, SocketError&gt;;
+</code></pre>
+<p>Callers inspect <code>.has_value()</code> or use the <code>if (!result) { /* handle */ }</code> pattern. Unlike exceptions, <code>std::expected</code> keeps control flow visible and local—no invisible stack unwinding—while still avoiding error-prone sentinel codes.</p>
+<pre><code class="language-cpp">// Before (C-style):
+int send_packet(int sock, const void* data, size_t size);
+if (send_packet(fd, buffer, length) != 0) {
+  // who knows why it failed?
+}
+
+// After (std::expected):
+auto result = socket.sendAll(buffer);
+if (!result) {
+  std::println(&quot;send failed: {}&quot;, result.error().message);
+}
+</code></pre>
+<h3 id="34-ranges-and-spans">3.4 Ranges and spans</h3>
+<p>Where you might reach for raw pointer arithmetic in C, we reach for <code>std::span</code>. Think of it as <strong>C++’s Go slice</strong> or <strong>Python’s <code>memoryview</code></strong>: a non-owning view over a contiguous block of memory. Packet decoding uses spans to iterate over byte buffers safely, and spans bridge nicely between STL containers and legacy C arrays.</p>
+<hr />
+<h2 id="4-cmake-primer-for-this-project">4. CMake primer for this project</h2>
+<p>The top-level <code>CMakeLists.txt</code> declares the project standard and adds three subdirectories. Each subdirectory registers a target and its dependencies. Modern CMake is about <strong>targets, not variables</strong>: every target states what it needs and CMake wires the dependency graph. The key ideas:</p>
+<ul>
+<li><code>add_executable(moonlapse_client main.cpp)</code> defines a target.</li>
+<li><code>target_include_directories</code> lists include paths. Visibility matters: use <code>PRIVATE</code> for internal headers, <code>PUBLIC</code> when dependents also need them, and <code>INTERFACE</code> for headers only (no sources).</li>
+<li><code>target_link_libraries</code> pulls in the shared library, threading library, and curses vendor library—again with <code>PRIVATE</code>/<code>PUBLIC</code> keywords to control propagation.</li>
+<li>Conditional blocks (<code>if (WIN32) ... else() ...</code>) let us link PDCurses on Windows and <code>ncurses</code> elsewhere.</li>
+</ul>
+<p>A minimalist client target looks like this:</p>
+<pre><code class="language-cmake">add_executable(moonlapse_client main.cpp)
+target_link_libraries(moonlapse_client PRIVATE moonlapse_shared Threads::Threads ${CURSES_LIBRARIES})
+target_compile_features(moonlapse_client PRIVATE cxx_std_23)
+</code></pre>
+<p>Think of targets as modules. By keeping include paths and compile definitions private to a target, we avoid the global include soup you might remember from old CMake setups. If you come from Makefiles, think of this as a typed build graph where each node declares its needs explicitly.</p>
+<p>🛠️ <strong>Hands-on mini exercise</strong></p>
+<ol>
+<li>Comment out the <code>target_link_libraries(moonlapse_client PRIVATE moonlapse_shared ...)</code> line in <code>client/CMakeLists.txt</code>.</li>
+<li>Run <code>cmake --build build</code>.</li>
+<li>Observe the link error complaining about missing protocol symbols.</li>
+<li>Restore the line and rebuild—the error disappears. This is the core CMake feedback loop: targets declare dependencies and the build either succeeds or fails with precise diagnostics.</li>
+</ol>
+<hr />
+<h2 id="5-how-to-read-modern-c-code">5. How to read modern C++ code</h2>
+<p>You will encounter syntax that looks alien at first glance. Here are the recurring patterns we will demystify in upcoming posts, along with rough translations to other languages:</p>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Meaning</th>
+<th>Analogy</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auto main() -&gt; int</code></td>
+<td>Trailing return type; stylistic</td>
+<td>Go function declarations</td>
+<td>Keeps complex return types readable</td>
+</tr>
+<tr>
+<td><code>std::jthread receiver(...)</code></td>
+<td>Joinable thread with cooperative stop</td>
+<td>Go goroutine + <code>context.Context</code></td>
+<td>Ensures threads terminate when scope ends</td>
+</tr>
+<tr>
+<td><code>std::scoped_lock guard{mutex};</code></td>
+<td>RAII mutex guard</td>
+<td>Go <code>sync.Mutex</code> + <code>defer</code></td>
+<td>Eliminates forgotten unlocks</td>
+</tr>
+<tr>
+<td><code>std::variant</code> + <code>std::visit</code></td>
+<td>Exhaustive sum type</td>
+<td>Rust <code>enum</code> with data</td>
+<td>Forces you to handle every packet kind</td>
+</tr>
+<tr>
+<td><code>constexpr</code> values</td>
+<td>Compile-time constants</td>
+<td><code>const</code> evaluated at compile time</td>
+<td>Eliminates runtime overhead</td>
+</tr>
+<tr>
+<td><code>std::unique_ptr&lt;T&gt;</code></td>
+<td>Exclusive owner with automatic cleanup</td>
+<td>Owning pointer + deterministic <code>defer close()</code></td>
+<td>Prevents leaks without GC</td>
+</tr>
+</tbody>
+</table>
+<p>If you keep function and type declarations narrow, C++ reads more like a strongly typed scripting language than the template jungle you may fear.</p>
+<hr />
+<h2 id="6-what-comes-next">6. What comes next</h2>
+<p>The next post will set up the shared protocol headers from scratch. You will learn how to:</p>
+<ul>
+<li>model packets with strongly typed enums (<code>enum class</code>),</li>
+<li>implement safe encoding/decoding helpers with <code>std::span</code>,</li>
+<li>use <code>std::expected</code> to propagate errors without exceptions,</li>
+<li>unit-test packet logic by compiling only the <code>shared</code> target.</li>
+</ul>
+<p>From there we will flesh out the networking layer, build the curses UI, and eventually add features like chat, all while reinforcing modern C++ idioms.</p>
+<p>🚧 <strong>Common C++ pitfalls to watch for</strong></p>
+<ul>
+<li>Forgetting <code>&amp;</code> in range-for loops (<code>for (auto player : players)</code> copies; use <code>auto&amp;</code> instead).</li>
+<li>Falling back to raw pointers—reach for <code>std::unique_ptr</code>, <code>std::shared_ptr</code>, or <code>gsl::not_null</code> instead.</li>
+<li>Omitting <code>const</code> qualifiers, which can cause accidental mutations. Err on the side of <code>const</code> until mutation is required.</li>
+<li>Ignoring compiler warnings. Treat warnings as errors; the project enables high warning levels by default.</li>
+</ul>
+<p>Until then, explore the repository:</p>
+<pre><code class="language-bash"># Build both client and server
+cmake --build build
+
+# Run the server
+./build/server/moonlapse_server
+
+# In another terminal, run the client
+./build/client/moonlapse_client
+</code></pre>
+<p>You now have a mental map of the playground. In §01 we will write the protocol layer together, introduce templates and concepts where they earn their keep, and see how modern C++ expresses the same ideas you already know from other languages—safely and succinctly.</p>
+<p>📚 <strong>Homework:</strong> run <code>cmake --build build --target moonlapse_shared</code>, then open <code>shared/packets.hpp</code> and identify every place <code>std::span</code> appears. Try explaining to yourself how each usage corresponds to a Go slice or Python <code>memoryview</code>. We will build on that understanding in the next chapter.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1306 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../02_networking_layer/">
+      
+      
+        <link rel="next" href="../04_curses_client/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.23">
+    
+    
+      
+        <title>Authoritative Server - Moonlapse Tutorials</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.84d31ad4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#03-orchestrating-the-authoritative-server" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Moonlapse Tutorials" class="md-header__button md-logo" aria-label="Moonlapse Tutorials" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Moonlapse Tutorials
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Authoritative Server
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Moonlapse Tutorials" class="md-nav__button md-logo" aria-label="Moonlapse Tutorials" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Moonlapse Tutorials
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../00_build_modern_curses_mmo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Build Modern Curses MMO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01_shared_protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Shared Protocol
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02_networking_layer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Networking Layer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Authoritative Server
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Authoritative Server
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#concurrency-toolkit-refresher" class="md-nav__link">
+    <span class="md-ellipsis">
+      Concurrency toolkit refresher
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-high-level-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. High-level structure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-session-lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Session lifecycle
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Session lifecycle">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-accepting-clients" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1 Accepting clients
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-registering-a-player" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2 Registering a player
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-threading-model-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3 Threading model overview
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-handling-client-packets" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Handling client packets
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Handling client packets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-movement-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1 Movement handling
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-chat-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.2 Chat handling
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-broadcasting-authoritative-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Broadcasting authoritative state
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Broadcasting authoritative state">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-removing-players-safely" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.1 Removing players safely
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-error-logging-and-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Error logging and diagnostics
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-try-it-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Try it now
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Checklist
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04_curses_client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Curses Client
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05_ship_and_extend/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Ship and Extend
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#concurrency-toolkit-refresher" class="md-nav__link">
+    <span class="md-ellipsis">
+      Concurrency toolkit refresher
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-high-level-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. High-level structure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-session-lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Session lifecycle
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Session lifecycle">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-accepting-clients" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1 Accepting clients
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-registering-a-player" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2 Registering a player
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-threading-model-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3 Threading model overview
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-handling-client-packets" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Handling client packets
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Handling client packets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-movement-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1 Movement handling
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-chat-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.2 Chat handling
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-broadcasting-authoritative-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Broadcasting authoritative state
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Broadcasting authoritative state">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-removing-players-safely" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.1 Removing players safely
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-error-logging-and-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Error logging and diagnostics
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-try-it-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Try it now
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Checklist
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="03-orchestrating-the-authoritative-server">§03 Orchestrating the Authoritative Server</h1>
+<p>With packets defined (§01) and sockets wrapped in RAII (§02), we can now <em>run the game itself</em>. This chapter turns those primitives into the living world loop on the server—accepting clients, mutating state, and broadcasting authoritative snapshots. We will unpack <code>server/main.cpp</code> with three pillars:</p>
+<ol>
+<li>accepting clients and assigning sessions,</li>
+<li>mutating the shared world in response to movement/chat packets,</li>
+<li>broadcasting authoritative snapshots back to every player.</li>
+</ol>
+<p>The server enforces the rules of the room—clients operate as thin terminals that render whatever the server says. Keeping the server authoritative prevents desyncs and cheats.</p>
+<hr />
+<h2 id="concurrency-toolkit-refresher">Concurrency toolkit refresher</h2>
+<p>We lean on a small set of modern C++23 concurrency primitives. If you come from
+Go or Python, here is the translation guide before diving in:</p>
+<ul>
+<li><strong><code>std::shared_ptr&lt;T&gt;</code></strong> – reference-counted shared ownership. Think of it as
+  an <code>Arc&lt;T&gt;</code> (Rust) or a ref-counted pointer; the object is destroyed when the
+  last owner drops it. We use it when two threads need to share a session safely.</li>
+<li><strong><code>std::mutex</code> + <code>std::scoped_lock</code></strong> – mutual exclusion. <code>std::scoped_lock</code>
+  acquires the mutex in its constructor and releases it in its destructor, so we
+  cannot forget to unlock—even if an exception or early return occurs.</li>
+<li><strong><code>std::atomic&lt;T&gt;</code></strong> – a data race free integer. Calling <code>fetch_add(1)</code> is the
+  C++ equivalent of <code>atomic.AddInt32(&amp;value, 1)</code> in Go; every thread sees a
+  unique player identifier without explicit locking.</li>
+<li><strong><code>std::jthread</code></strong> – RAII-aware thread. Its destructor automatically joins or
+  requests stop, eliminating the “forgot to join” crashes that plagued
+  <code>std::thread</code>.</li>
+<li><strong><code>std::variant</code> + <code>std::visit</code></strong> – sum types with exhaustive visitors.
+  Combining them with the <code>Overloaded</code> helper lets us route packets to the
+  correct handler with compile-time checking.</li>
+</ul>
+<p>🧠 <strong>Concept note:</strong> We stick with blocking sockets plus a thread-per-connection
+model because it mirrors the platform-neutral abstractions from §02 and keeps
+the code straightforward. Later chapters can swap in event loops or coroutine
+based IO without touching the gameplay logic.</p>
+<hr />
+<h2 id="1-high-level-structure">1. High-level structure</h2>
+<p><code>server/main.cpp</code> starts by importing the shared protocol and networking headers, then spins up a <code>GameServer</code> object.</p>
+<pre><code class="language-cpp">using Moonlapse::Net::TcpListener;
+using Moonlapse::Net::TcpSocket;
+namespace Protocol = Moonlapse::Protocol;
+
+constexpr std::uint16_t serverPort = 40500;
+
+auto main() -&gt; int {
+  constexpr std::string_view listenAddress = &quot;0.0.0.0&quot;;
+  auto listenerResult = TcpListener::bind(listenAddress, serverPort);
+  if (!listenerResult) {
+    std::println(&quot;[server] bind failed: {}&quot;, listenerResult.error().message);
+    return 1;
+  }
+
+  auto listenerInstance = std::move(listenerResult.value());
+  if (auto listenResult = listenerInstance.listen(); !listenResult) {
+    std::println(&quot;[server] listen failed: {}&quot;, listenResult.error().message);
+    return 1;
+  }
+
+  std::println(&quot;[server] listening on {}:{}&quot;, listenAddress, serverPort);
+  GameServer server{std::move(listenerInstance)};
+  server.run();
+  return 0;
+}
+</code></pre>
+<p>Everything interesting happens inside <code>GameServer</code>.</p>
+<ul>
+<li><code>TcpListener::bind()</code> and <code>listen()</code> come straight from §02.</li>
+<li>We log and exit cleanly if the port is unavailable.</li>
+<li>Once the listener is ready, <code>GameServer::run()</code> enters an accept loop.</li>
+</ul>
+<p>🧠 <strong>Concept note:</strong> <code>constexpr std::string_view listenAddress</code> bakes the
+address into the binary at compile time. It behaves like a global constant in
+Go or a module-level constant in Python—cheap to use and impossible to mutate
+accidentally.</p>
+<hr />
+<h2 id="2-session-lifecycle">2. Session lifecycle</h2>
+<p>Each connected player receives a <code>Session</code> object: a shared wrapper around a <code>TcpSocket</code> plus metadata. Sessions live inside <code>std::shared_ptr</code> because the accept loop, worker threads, and snapshot broadcasts all need to hold references.</p>
+<p>🧠 <strong>Concept note:</strong> <code>std::shared_ptr</code> keeps a reference count next to the
+object. Copying the pointer increments the count; destroying it decrements the
+count and deletes the session when it hits zero. This gives us garbage-collected
+style ownership semantics with deterministic destruction.</p>
+<pre><code class="language-cpp">class GameServer {
+public:
+  explicit GameServer(TcpListener listener) noexcept
+      : listener{std::move(listener)} {}
+
+  void run();
+
+private:
+  struct Session {
+    Session(Protocol::PlayerId playerIdentifier, TcpSocket&amp;&amp; socket) noexcept
+        : playerId{playerIdentifier}, socket{std::move(socket)} {}
+
+    auto send(std::span&lt;const std::byte&gt; payload) -&gt; SocketResult&lt;void&gt; {
+      std::scoped_lock guard{sendMutex};
+      return socket.sendAll(payload);
+    }
+
+    Protocol::PlayerId playerId;
+    TcpSocket socket;
+    std::mutex sendMutex;
+  };
+
+  // std::scoped_lock enters the critical section in its constructor and
+  // releases it automatically when the guard goes out of scope.
+
+  struct PlayerEntry {
+    Protocol::Position position;
+    std::shared_ptr&lt;Session&gt; session;
+  };
+
+  TcpListener listener;
+  std::atomic&lt;Protocol::PlayerId&gt; nextId{1};
+  mutable std::mutex playersMutex;
+  std::unordered_map&lt;Protocol::PlayerId, PlayerEntry&gt; players;
+  std::vector&lt;std::jthread&gt; workers;
+};
+</code></pre>
+<p>Key choices:</p>
+<ul>
+<li><code>Session::send()</code> guards the socket with a mutex because multiple threads (movement broadcasts, chat broadcasts) may write simultaneously.</li>
+<li>Worker threads live in a <code>std::vector&lt;std::jthread&gt;</code>. Thanks to RAII, the destructor joins them automatically when the server shuts down.</li>
+<li><code>mutable std::mutex playersMutex;</code> lets const-qualified helpers lock the map
+  even though they do not mutate observable state. It is similar to marking a
+  field as interiorly mutable in Rust.</li>
+</ul>
+<p>🧠 <strong>Concept note:</strong> <code>std::jthread</code> fixes the classic <code>std::thread</code> footgun:
+destroying an unjoined thread calls <code>std::terminate()</code>. With <code>std::jthread</code>,
+the destructor joins (or stop-requests) automatically, so even error paths shut
+down cleanly.</p>
+<p>🧠 <strong>Concept note:</strong> <code>std::make_shared&lt;Session&gt;(...)</code> allocates the control block
+and the session in one step. It is exception-safe and avoids the double
+allocation that <code>std::shared_ptr&lt;Session&gt;{new Session(...)}</code> would incur.</p>
+<h3 id="21-accepting-clients">2.1 Accepting clients</h3>
+<p><code>GameServer::run()</code> loops forever, calling <code>listener.accept()</code> for each connection. The accept loop stays on the main thread; each client runs on its own worker thread. This keeps networking responsive while the world map and player registry remain synchronised behind a single mutex. On success, we create a new session and hand it off to <code>registerPlayer()</code>.</p>
+<pre><code class="language-cpp">void GameServer::run() {
+  std::println(&quot;[server] waiting for players...&quot;);
+  while (true) {
+    auto connection = listener.accept();
+    if (!connection) {
+      std::println(&quot;[server] accept failed: {}&quot;, connection.error().message);
+      continue;
+    }
+    registerPlayer(std::move(connection.value()));
+  }
+}
+</code></pre>
+<h3 id="22-registering-a-player">2.2 Registering a player</h3>
+<p><code>registerPlayer()</code> assigns a fresh identifier, chooses a spawn point, records the session, and sends the initial snapshot.</p>
+<pre><code class="language-cpp">void GameServer::registerPlayer(TcpSocket socket) {
+  auto playerIdentifier = nextId.fetch_add(1);
+  auto session =
+      std::make_shared&lt;Session&gt;(playerIdentifier, std::move(socket));
+  auto position = spawnPosition(playerIdentifier);
+
+  {
+    std::scoped_lock guard{playersMutex};
+    players.emplace(playerIdentifier,
+                    PlayerEntry{.position = position, .session = session});
+  }
+
+  std::println(&quot;[server] player {} connected at ({}, {})&quot;, playerIdentifier,
+               position.x, position.y);
+
+  if (auto snapshotResult = sendSnapshot(session, playerIdentifier);
+      !snapshotResult) {
+    std::println(&quot;[server] failed to initialize player {}: {}&quot;,
+                 playerIdentifier, snapshotResult.error().message);
+    session-&gt;socket.shutdown();
+    session-&gt;socket.close();
+    removePlayer(playerIdentifier);
+    return;
+  }
+
+  broadcastState();
+
+  workers.emplace_back([this, session]() { handleClient(session); });
+}
+</code></pre>
+<p>Steps in order:</p>
+<ol>
+<li><strong>Allocate ID:</strong> <code>nextId</code> is an <code>std::atomic</code>. Each new player increments it without data races.</li>
+<li><strong>Spawn position:</strong> <code>spawnPosition()</code> spreads players across the grid without collisions by deriving coordinates from the ID.</li>
+<li><strong>Store session:</strong> we grab <code>playersMutex</code>, insert state, and release the lock quickly.</li>
+<li><strong>Send initial snapshot:</strong> the new player learns its ID and the current world.</li>
+<li><strong>Notify everyone else:</strong> <code>broadcastState()</code> shares the updated roster.</li>
+<li><strong>Launch worker thread:</strong> <code>handleClient()</code> runs in a dedicated <code>std::jthread</code>.</li>
+</ol>
+<p>If any step fails—say, a socket write error—the session tears down cleanly while the rest of the server keeps running.</p>
+<p>🧠 <strong>Concept note:</strong> <code>fetch_add(1)</code> on <code>std::atomic</code> is equivalent to Go’s
+<code>atomic.AddUint32</code>. The operation is indivisible, so two threads can never hand
+out the same <code>PlayerId</code> even if they accept connections at the same moment.</p>
+<p>🧠 <strong>Concept note:</strong> <code>workers.emplace_back(...)</code> constructs the <code>std::jthread</code>
+in-place inside the vector, avoiding an extra move. It mirrors Rust’s
+<code>vec.push(Thread::new(...))</code> but without temporary objects.</p>
+<pre><code class="language-cpp">[[nodiscard]] auto GameServer::spawnPosition(Protocol::PlayerId playerIdentifier)
+    -&gt; Protocol::Position {
+  auto index = static_cast&lt;std::int32_t&gt;(playerIdentifier - 1);
+  auto x = index % gridWidth;
+  auto y = (index / gridWidth) % gridHeight;
+  return Protocol::Position{x, y};
+}
+</code></pre>
+<p>🧠 <strong>Concept note:</strong> The modulo arithmetic walks the grid row by row, ensuring
+every new player spawns on a distinct tile until the grid fills. The helper is
+pure math—no locks required—which keeps registration fast.</p>
+<h3 id="23-threading-model-overview">2.3 Threading model overview</h3>
+<pre><code>Main thread:
+  listener.accept() → registerPlayer()
+
+Worker thread (per player):
+  handleClient() → receive loop → handleMovement()/handleChat()
+</code></pre>
+<p>The <code>std::jthread</code> pool guarantees each worker joins automatically when the server shuts down, so we never leak threads.</p>
+<p>⚖️ <strong>Design trade-off:</strong> A thread per connection keeps the walkthrough
+approachable and works well for dozens of players. At larger scales you would
+switch to an event loop (epoll/kqueue) or a pool of worker threads consuming a
+queue of socket jobs. The rest of the architecture—sessions, protocol decoding,
+and broadcast helpers—remains valid if you later adopt those models.</p>
+<hr />
+<h2 id="3-handling-client-packets">3. Handling client packets</h2>
+<p><code>handleClient()</code> performs the canonical read loop:</p>
+<pre><code class="language-cpp">void GameServer::handleClient(const std::shared_ptr&lt;Session&gt;&amp; session) {
+  while (true) {
+    auto headerBytes =
+        session-&gt;socket.receiveExact(Protocol::packetHeaderSize);
+    if (!headerBytes) {
+      logSocketError(&quot;receive header&quot;, session-&gt;playerId,
+                     headerBytes.error());
+      break;
+    }
+
+    auto headerResult =
+        Protocol::decodeHeader(std::span&lt;const std::byte&gt;{headerBytes.value()});
+    if (!headerResult) {
+      std::println(&quot;[server] packet header error for player {}: {}&quot;,
+                   session-&gt;playerId,
+                   describePacketError(headerResult.error()));
+      break;
+    }
+
+    auto payloadBytes =
+        session-&gt;socket.receiveExact(headerResult-&gt;payloadSize);
+    if (!payloadBytes) {
+      logSocketError(&quot;receive payload&quot;, session-&gt;playerId,
+                     payloadBytes.error());
+      break;
+    }
+
+    auto packetResult = Protocol::decodePacket(
+        *headerResult, std::span&lt;const std::byte&gt;{payloadBytes.value()});
+    if (!packetResult) {
+      std::println(&quot;[server] packet decode error for player {}: {}&quot;,
+                   session-&gt;playerId,
+                   describePacketError(packetResult.error()));
+      break;
+    }
+
+    std::visit(Overloaded{
+                  [&amp;](const Protocol::MovementPacket&amp; movement) {
+                    handleMovement(session, movement);
+                  },
+                  [](const Protocol::StateSnapshotPacket&amp;) {
+                    // Clients never send snapshots back.
+                  },
+                  [&amp;](const Protocol::ChatPacket&amp; chat) {
+                    handleChat(session, chat);
+                  }},
+               *packetResult);
+  }
+
+  session-&gt;socket.shutdown();
+  session-&gt;socket.close();
+  removePlayer(session-&gt;playerId);
+  broadcastState();
+  std::println(&quot;[server] player {} disconnected&quot;, session-&gt;playerId);
+}
+</code></pre>
+<p>Highlights:</p>
+<ul>
+<li><code>receiveExact()</code> and <code>decodeHeader()</code> come from earlier chapters.</li>
+<li>Each failure path logs context and breaks the loop; cleanup happens after the loop.</li>
+<li><code>Overloaded</code> is the standard helper pattern for visiting <code>std::variant</code> with lambdas.</li>
+</ul>
+<pre><code class="language-cpp">template &lt;typename... Handlers&gt; struct Overloaded : Handlers... {
+  using Handlers::operator()...;
+};
+
+template &lt;typename... Handlers&gt; Overloaded(Handlers...)
+    -&gt; Overloaded&lt;Handlers...&gt;;
+</code></pre>
+<p>🧠 <strong>Concept note:</strong> The helper inherits from each lambda and exposes all
+<code>operator()</code> overloads at once. Passing <code>Overloaded{...}</code> into <code>std::visit</code>
+mimics pattern-matching: the compiler checks that we handle every variant
+alternative.</p>
+<h3 id="31-movement-handling">3.1 Movement handling</h3>
+<p>Movement packets reflect the client’s arrow-key input, but the server revalidates every command, clamps movement to the grid, and only trusts packets from the owning player.</p>
+<pre><code class="language-cpp">void GameServer::handleMovement(const std::shared_ptr&lt;Session&gt;&amp; session,
+                                const Protocol::MovementPacket&amp; movement) {
+  if (movement.player != session-&gt;playerId) {
+    std::println(&quot;[server] ignoring spoofed movement for player {}&quot;,
+                 session-&gt;playerId);
+    return;
+  }
+
+  bool updated = false;
+  {
+    std::scoped_lock guard{playersMutex};
+    auto entry = players.find(session-&gt;playerId);
+    if (entry == players.end()) {
+      return;
+    }
+    auto&amp; position = entry-&gt;second.position;
+    Protocol::Position previous = position;
+    applyMovement(position, movement.direction);
+    updated = previous.x != position.x || previous.y != position.y;
+  }
+
+  if (updated) {
+    broadcastState();
+  }
+}
+</code></pre>
+<ul>
+<li>Validation happens first—anything spoofed gets logged and ignored.</li>
+<li>We take the lock, adjust the player’s position via <code>applyMovement()</code>, and remember if anything changed.</li>
+<li>When the character moves, we broadcast a fresh snapshot to everyone.</li>
+</ul>
+<p>Movement uses helper functions:</p>
+<pre><code class="language-cpp">[[nodiscard]] auto clampCoordinate(std::int32_t value, std::int32_t ceiling)
+    -&gt; std::int32_t {
+  if (value &lt; 0) {
+    return 0;
+  }
+  if (value &gt;= ceiling) {
+    return ceiling - 1;
+  }
+  return value;
+}
+
+void applyMovement(Protocol::Position&amp; position,
+                   Protocol::Direction direction) {
+  switch (direction) {
+  case Protocol::Direction::Up:
+    --position.y;
+    break;
+  case Protocol::Direction::Down:
+    ++position.y;
+    break;
+  case Protocol::Direction::Left:
+    --position.x;
+    break;
+  case Protocol::Direction::Right:
+    ++position.x;
+    break;
+  }
+
+  position.x = clampCoordinate(position.x, gridWidth);
+  position.y = clampCoordinate(position.y, gridHeight);
+}
+</code></pre>
+<p>These helpers keep the main handler tidy and express grid rules in one place.</p>
+<p>🧠 <strong>Concept note:</strong> <code>gridWidth</code> and <code>gridHeight</code> are compile-time constants at
+the top of <code>server/main.cpp</code>. Editing them instantly changes the playfield size
+for every new session.</p>
+<h3 id="32-chat-handling">3.2 Chat handling</h3>
+<p>Chat packets carry <code>{player, message}</code>. The server verifies the sender and rebroadcasts.</p>
+<pre><code class="language-cpp">void GameServer::handleChat(const std::shared_ptr&lt;Session&gt;&amp; session,
+                            const Protocol::ChatPacket&amp; chat) {
+  if (chat.player != session-&gt;playerId) {
+    std::println(&quot;[server] ignoring spoofed chat for player {}&quot;,
+                 session-&gt;playerId);
+    return;
+  }
+
+  broadcastChat(chat);
+}
+</code></pre>
+<p>Chat reuses the same send guard as movement broadcasts. Every packet travels through <code>Protocol::encode(chat)</code> before hitting the wire.</p>
+<hr />
+<h2 id="4-broadcasting-authoritative-state">4. Broadcasting authoritative state</h2>
+<p>Two broadcasting helpers keep the main logic compact:</p>
+<pre><code class="language-cpp">void GameServer::broadcastState(Protocol::PlayerId focus = 0) {
+  auto snapshot = gatherSnapshot(focus);
+  auto encoded = Protocol::encode(snapshot);
+  auto recipients = snapshotSessions();
+
+  for (const auto&amp; recipient : recipients) {
+    if (!recipient) {
+      continue;
+    }
+    if (auto result = recipient-&gt;send(std::span&lt;const std::byte&gt;{encoded});
+        !result) {
+      std::println(&quot;[server] broadcast failed for player {}: {}&quot;,
+                   recipient-&gt;playerId, result.error().message);
+      removePlayer(recipient-&gt;playerId);
+    }
+  }
+}
+
+void GameServer::broadcastChat(const Protocol::ChatPacket&amp; chat) {
+  auto encoded = Protocol::encode(chat);
+  auto recipients = snapshotSessions();
+
+  for (const auto&amp; recipient : recipients) {
+    if (!recipient) {
+      continue;
+    }
+    if (auto result = recipient-&gt;send(std::span&lt;const std::byte&gt;{encoded});
+        !result) {
+      std::println(&quot;[server] chat broadcast failed for player {}: {}&quot;,
+                   recipient-&gt;playerId, result.error().message);
+      removePlayer(recipient-&gt;playerId);
+    }
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>Future tweak:</strong> Both broadcast functions follow the same template by
+design—encode, snapshot sessions, iterate. As the game grows you can extract a
+generic helper or introduce delta compression so idle players receive fewer
+bytes. For now the duplication keeps the walkthrough explicit.</p>
+</blockquote>
+<p>Supporting helpers gather state safely:</p>
+<pre><code class="language-cpp">[[nodiscard]] auto GameServer::gatherSnapshot(Protocol::PlayerId focus) const
+    -&gt; Protocol::StateSnapshotPacket {
+  Protocol::StateSnapshotPacket snapshot{};
+  snapshot.focusPlayer = focus;
+
+  std::scoped_lock guard{playersMutex};
+  snapshot.players.reserve(players.size());
+  for (const auto&amp; [playerIdentifier, entry] : players) {
+    snapshot.players.emplace_back(
+        Protocol::PlayerState{playerIdentifier, entry.position});
+  }
+  return snapshot;
+}
+
+[[nodiscard]] auto GameServer::snapshotSessions() const
+    -&gt; std::vector&lt;std::shared_ptr&lt;Session&gt;&gt; {
+  std::vector&lt;std::shared_ptr&lt;Session&gt;&gt; sessions;
+  std::scoped_lock guard{playersMutex};
+  sessions.reserve(players.size());
+  for (const auto&amp; [playerIdentifier, entry] : players) {
+    sessions.push_back(entry.session);
+  }
+  return sessions;
+}
+</code></pre>
+<p>Design notes:</p>
+<ul>
+<li>We copy <code>shared_ptr</code> instances out of the map while holding the lock, then release the lock before performing network I/O. This avoids holding the mutex during potentially slow <code>send()</code> calls.</li>
+<li>The optional <code>focus</code> argument carries the joining player’s ID so the client can highlight itself.</li>
+<li>If a send fails, we log and call <code>removePlayer()</code>.</li>
+</ul>
+<p>🧠 <strong>Concept note:</strong> Never hold a mutex while performing blocking I/O. The
+<code>snapshotSessions()</code> helper minimises lock duration: we grab the map, copy the
+<code>std::shared_ptr</code> handles, release the lock, and only then call <code>sendAll</code>. If a
+client stalls, the rest of the world keeps moving.</p>
+<h3 id="41-removing-players-safely">4.1 Removing players safely</h3>
+<pre><code class="language-cpp">void GameServer::removePlayer(Protocol::PlayerId playerIdentifier) {
+  std::shared_ptr&lt;Session&gt; removed;
+  {
+    std::scoped_lock guard{playersMutex};
+    auto entry = players.find(playerIdentifier);
+    if (entry == players.end()) {
+      return;
+    }
+    removed = std::move(entry-&gt;second.session);
+    players.erase(entry);
+  }
+
+  if (removed) {
+    removed-&gt;socket.shutdown();
+    removed-&gt;socket.close();
+  }
+}
+</code></pre>
+<p>We grab the session pointer while locked, erase the map entry, then release the lock before shutting down the socket. This prevents deadlocks caused by calling into networking code while holding <code>playersMutex</code>.</p>
+<p>🧠 <strong>Concept note:</strong> Returning the <code>std::shared_ptr</code> outside the lock guarantees
+the session object stays alive until cleanup finishes—even if other threads drop
+their copies during removal. Once every reference disappears, the RAII
+destructor runs and closes the socket one final time.</p>
+<hr />
+<h2 id="5-error-logging-and-diagnostics">5. Error logging and diagnostics</h2>
+<p>The server wraps socket errors in a helper to keep logs consistent:</p>
+<pre><code class="language-cpp">static void GameServer::logSocketError(std::string_view action,
+                                       Protocol::PlayerId playerIdentifier,
+                                       const SocketError&amp; error) {
+  if (error.code == SocketErrorCode::ConnectionClosed) {
+    std::println(&quot;[server] player {} closed the connection&quot;,
+                 playerIdentifier);
+    return;
+  }
+
+  std::println(&quot;[server] {} failed for player {}: {}&quot;, action,
+               playerIdentifier, error.message);
+}
+</code></pre>
+<p><code>describePacketError()</code> translates <code>Protocol::PacketError</code> codes into strings, mirroring the client’s UX. If decoding fails due to version mismatch or malformed payloads, we can see it instantly in the logs.</p>
+<hr />
+<h2 id="6-try-it-now">6. Try it now</h2>
+<p>🛠️ <strong>Build checkpoint:</strong></p>
+<pre><code class="language-bash">cmake --build build --target moonlapse_server
+</code></pre>
+<p>Then launch the server from one terminal:</p>
+<pre><code class="language-bash">./build/server/moonlapse_server
+</code></pre>
+<p>From a second terminal run the <code>moonlapse_client</code> binary (you will build it in
+§04; if you already compiled it, re-use that executable). Watch the server log
+as you connect, move, chat, and disconnect.</p>
+<p>📋 <strong>Sample log</strong></p>
+<pre><code>[server] listening on 0.0.0.0:40500
+[server] waiting for players...
+[server] player 1 connected at (0, 0)
+[server] player 1 disconnected
+</code></pre>
+<p>Seeing the connect/disconnect messages proves the accept loop, session
+registration, and cleanup path are wired correctly.</p>
+<hr />
+<h2 id="7-checklist">7. Checklist</h2>
+<ul>
+<li>[x] <code>GameServer</code> owns the listener, player map, and worker threads.</li>
+<li>[x] Each player session guards its outgoing socket with a mutex.</li>
+<li>[x] Movement and chat handlers validate the sender before mutating state.</li>
+<li>[x] Snapshots broadcast the authoritative world after every change.</li>
+<li>[x] Player removal shuts down sockets outside the mutex to avoid deadlocks.</li>
+<li>[x] Logging distinguishes between clean disconnects and unexpected errors.</li>
+</ul>
+<p>With the server orchestrating the world, every movement and chat line flows through a single authority.</p>
+<pre><code>[Client A] →
+             \
+              [GameServer] ↔ (Authoritative State)
+             /
+[Client B] →
+</code></pre>
+<p>In §04 we will switch perspectives to the client: rendering the grid with curses, managing chat focus, and coordinating the receiver thread with the input loop.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

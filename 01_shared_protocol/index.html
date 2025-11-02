@@ -1,0 +1,1319 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../00_build_modern_curses_mmo/">
+      
+      
+        <link rel="next" href="../02_networking_layer/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.23">
+    
+    
+      
+        <title>Shared Protocol - Moonlapse Tutorials</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.84d31ad4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#01-stitching-together-the-shared-protocol-layer" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Moonlapse Tutorials" class="md-header__button md-logo" aria-label="Moonlapse Tutorials" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Moonlapse Tutorials
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Shared Protocol
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Moonlapse Tutorials" class="md-nav__button md-logo" aria-label="Moonlapse Tutorials" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Moonlapse Tutorials
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../00_build_modern_curses_mmo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Build Modern Curses MMO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Shared Protocol
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Shared Protocol
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-wire-up-the-shared-target-in-cmake" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Wire up the shared target in CMake
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-establish-the-packet-scaffolding" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Establish the packet scaffolding
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Establish the packet scaffolding">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-inline-constexpr" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why inline constexpr?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strong-enums-for-clarity" class="md-nav__link">
+    <span class="md-ellipsis">
+      Strong enums for clarity
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-encoding-helpers-thinking-in-bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Encoding helpers: thinking in bytes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Encoding helpers: thinking in bytes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-network-byte-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1 Network byte order
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-serializing-into-a-buffer" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.2 Serializing into a buffer
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-encoding-the-packet-header" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.3 Encoding the packet header
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-payload-writer-utility" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.4 Payload writer utility
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-putting-it-together-encode-a-movement-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.5 Putting it together: encode a movement command
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-decoding-with-safety-guarantees" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Decoding with safety guarantees
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Decoding with safety guarantees">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-packet-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.1 Packet errors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-reading-integrals-with-bounds-checking" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.2 Reading integrals with bounds checking
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-header-decoding" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.3 Header decoding
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-decoding-a-movement-payload" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.4 Decoding a movement payload
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#45-stitching-decoded-variants" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.5 Stitching decoded variants
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-testing-the-shared-module-in-isolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Testing the shared module in isolation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Checklist
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next-02" class="md-nav__link">
+    <span class="md-ellipsis">
+      What’s next (§02)
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02_networking_layer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Networking Layer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03_authoritative_server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Authoritative Server
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04_curses_client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Curses Client
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05_ship_and_extend/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Ship and Extend
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-wire-up-the-shared-target-in-cmake" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Wire up the shared target in CMake
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-establish-the-packet-scaffolding" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Establish the packet scaffolding
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Establish the packet scaffolding">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-inline-constexpr" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why inline constexpr?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strong-enums-for-clarity" class="md-nav__link">
+    <span class="md-ellipsis">
+      Strong enums for clarity
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-encoding-helpers-thinking-in-bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Encoding helpers: thinking in bytes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Encoding helpers: thinking in bytes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-network-byte-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1 Network byte order
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-serializing-into-a-buffer" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.2 Serializing into a buffer
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-encoding-the-packet-header" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.3 Encoding the packet header
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-payload-writer-utility" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.4 Payload writer utility
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-putting-it-together-encode-a-movement-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.5 Putting it together: encode a movement command
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-decoding-with-safety-guarantees" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Decoding with safety guarantees
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Decoding with safety guarantees">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-packet-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.1 Packet errors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-reading-integrals-with-bounds-checking" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.2 Reading integrals with bounds checking
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-header-decoding" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.3 Header decoding
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-decoding-a-movement-payload" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.4 Decoding a movement payload
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#45-stitching-decoded-variants" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.5 Stitching decoded variants
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-testing-the-shared-module-in-isolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Testing the shared module in isolation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Checklist
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next-02" class="md-nav__link">
+    <span class="md-ellipsis">
+      What’s next (§02)
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="01-stitching-together-the-shared-protocol-layer">§01 Stitching Together the Shared Protocol Layer</h1>
+<p>In §00 you met the project layout, build tooling, and the modern C++ mindset we rely on. Now we immediately put that mindset to work by implementing the core that both the client and server must agree on: the <strong>protocol</strong>. We will design packet types, encode/decode helpers, and error handling inside the <code>shared/</code> module. By the end of this chapter you will have a clean, testable static library that both sides can link against.</p>
+<p>We will start small and iterate:</p>
+<ol>
+<li>Set up the <code>shared</code> target in CMake.</li>
+<li>Define fundamental domain types (player identifiers, directions, packet headers).</li>
+<li>Implement encoding helpers that serialize to network byte order using <code>std::byte</code> and <code>std::span</code>.</li>
+<li>Decode payloads safely with <code>std::expected</code> to surface errors without exceptions.</li>
+<li>Build and test the shared module independently.</li>
+</ol>
+<hr />
+<h2 id="1-wire-up-the-shared-target-in-cmake">1. Wire up the shared target in CMake</h2>
+<p>Create <code>shared/CMakeLists.txt</code> so the root <code>CMakeLists.txt</code> can <code>add_subdirectory(shared)</code>.</p>
+<pre><code class="language-cmake">add_library(moonlapse_shared STATIC
+  packets.hpp
+)
+
+set_target_properties(moonlapse_shared PROPERTIES
+  CXX_STANDARD 23
+  CXX_STANDARD_REQUIRED ON
+  CXX_EXTENSIONS OFF
+)
+
+target_include_directories(moonlapse_shared PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+# Optional (recommended for installs): CMake 3.23+ can track installed headers explicitly.
+# target_sources(moonlapse_shared
+#   PUBLIC
+#     FILE_SET HEADERS
+#     BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
+#     FILES packets.hpp
+# )
+
+target_compile_features(moonlapse_shared PUBLIC cxx_std_23)
+</code></pre>
+<p>A few things to notice:</p>
+<ul>
+<li><code>add_library(... STATIC …)</code> gives us a static archive the client and server can link against.</li>
+<li>We set the standard requirements to C++23 explicitly (redundant with the top-level definition but harmless and self-documenting).</li>
+<li><code>target_include_directories(... PUBLIC …)</code> makes the headers available to dependents without leaking extra search paths.</li>
+<li><code>target_compile_features(... PUBLIC cxx_std_23)</code> ensures any target that links against this one inherits the appropriate standard requirement.</li>
+<li>If you export or install the library, uncomment the <code>target_sources</code> block so CMake knows which headers belong to the target.</li>
+</ul>
+<blockquote>
+<p><strong>Try it</strong>: run <code>cmake --build build --target moonlapse_shared</code> to make sure your CMake hierarchy is healthy before writing code. Right now the sources are empty, but once the files exist this target will build on its own.</p>
+</blockquote>
+<p>🛠️ <strong>Checkpoint:</strong> if the build fails here, double-check the new <code>add_library</code> line and confirm the root <code>CMakeLists.txt</code> includes <code>add_subdirectory(shared)</code>.</p>
+<hr />
+<h2 id="2-establish-the-packet-scaffolding">2. Establish the packet scaffolding</h2>
+<p>Create <code>shared/packets.hpp</code> and start with the essential includes, namespace, and type aliases. We lean heavily on <code>&lt;cstdint&gt;</code>, <code>&lt;span&gt;</code>, <code>&lt;expected&gt;</code>, and <code>&lt;array&gt;</code> from the standard library.</p>
+<pre><code class="language-cpp">#pragma once
+
+#include &lt;array&gt;
+#include &lt;bit&gt;
+#include &lt;cstddef&gt;
+#include &lt;cstdint&gt;
+#include &lt;expected&gt;
+#include &lt;span&gt;
+#include &lt;variant&gt;
+#include &lt;vector&gt;
+
+namespace Moonlapse::Protocol {
+
+inline constexpr std::uint16_t protocolVersion = 1;
+inline constexpr std::size_t packetHeaderSize =
+    sizeof(std::uint16_t) + sizeof(std::uint16_t) + sizeof(std::uint32_t);
+
+using PlayerId = std::uint32_t;
+</code></pre>
+<h3 id="why-inline-constexpr">Why <code>inline constexpr</code>?</h3>
+<p>In a header we want a single definition across translation units. <code>inline constexpr</code> gives us a guaranteed ODR-safe constant. This is similar to a <code>const</code> global in Go but scoped inside the namespace.</p>
+<blockquote>
+<p><strong>Concept note:</strong> <code>constexpr</code> values are evaluated at compile time. The compiler substitutes the literal values everywhere they are used, so there is zero runtime overhead.</p>
+</blockquote>
+<h3 id="strong-enums-for-clarity">Strong enums for clarity</h3>
+<p>Preferred enumerations use <code>enum class</code>. The scoped name avoids collisions and prevents implicit conversions.</p>
+<pre><code class="language-cpp">enum class PacketType : std::uint8_t {
+  Movement = 1,
+  StateSnapshot = 2,
+};
+
+enum class Direction : std::uint8_t {
+  Up = 0,
+  Down = 1,
+  Left = 2,
+  Right = 3,
+};
+</code></pre>
+<p>Note that we specify the underlying type (<code>: std::uint8_t</code>) to control the byte layout on the wire. No magic numbers float around; each field matches the protocol spec.</p>
+<p>Add simple structs for positions and movement commands:</p>
+<pre><code class="language-cpp">struct Position {
+  std::int32_t x{};
+  std::int32_t y{};
+};
+
+struct MovementPacket {
+  PlayerId player{};
+  Direction direction{Direction::Up};
+};
+</code></pre>
+<p>We will add more packet types (e.g., state snapshots, chat) over time. For now this is enough to get the encoder/decoder pipeline in place.</p>
+<p>Close the namespace at the bottom of the file for now; we will keep appending to this header throughout the chapter.</p>
+<hr />
+<h2 id="3-encoding-helpers-thinking-in-bytes">3. Encoding helpers: thinking in bytes</h2>
+<p>When you talk to the network you have to convert structs into contiguous byte sequences. We want to perform this without dangerous pointer casting or manual buffer math. Enter <code>std::array&lt;std::byte, N&gt;</code> plus <code>std::span</code>.</p>
+<h3 id="31-network-byte-order">3.1 Network byte order</h3>
+<p>The protocol uses big-endian byte order. C++23’s <code>&lt;bit&gt;</code> provides <code>std::byteswap</code> to help. Let’s add two small helpers:</p>
+<pre><code class="language-cpp">template &lt;std::integral T&gt;
+[[nodiscard]] constexpr auto toBigEndian(T value) noexcept -&gt; T {
+  if constexpr (std::endian::native == std::endian::big) {
+    return value;
+  }
+  return std::byteswap(value);
+}
+
+template &lt;std::integral T&gt;
+[[nodiscard]] constexpr auto fromBigEndian(T value) noexcept -&gt; T {
+  return toBigEndian(value);
+}
+</code></pre>
+<p>These templates accept any integral type (<code>std::integral</code> is a C++20 concept) and either return the original value (on big-endian hosts) or byteswap (on little-endian machines like x86-64).</p>
+<blockquote>
+<p><strong>Concept note:</strong> the <code>std::integral</code> concept keeps these helpers honest—only integer-like types compile.</p>
+<p><strong>Concept note:</strong> <code>[[nodiscard]]</code> asks the compiler to warn if you ignore the returned value, which is invaluable for functions that return converted data or <code>std::expected</code> objects.</p>
+</blockquote>
+<h3 id="32-serializing-into-a-buffer">3.2 Serializing into a buffer</h3>
+<p>Define a helper that writes integrals into an existing array. We design it with spans so it works with any buffer size—<code>std::span</code> is the C++ equivalent of a Go slice or Python <code>memoryview</code>.</p>
+<pre><code class="language-cpp">template &lt;std::integral T, std::size_t N&gt;
+void writeIntegral(std::array&lt;std::byte, N&gt;&amp; target, std::size_t&amp; offset,
+                   T value) noexcept {
+  auto networkOrder = toBigEndian(value);
+  auto bytes = std::bit_cast&lt;std::array&lt;std::byte, sizeof(T)&gt;&gt;(networkOrder);
+  auto destination =
+      std::span&lt;std::byte, N&gt;{target}.subspan(offset, bytes.size());
+  std::copy_n(bytes.begin(), bytes.size(), destination.begin());
+  offset += bytes.size();
+}
+
+template &lt;std::integral T&gt;
+[[nodiscard]] inline auto readIntegral(std::span&lt;const std::byte&gt; buffer,
+                                       std::size_t&amp; offset)
+    -&gt; PacketResult&lt;T&gt; {
+  if (offset + sizeof(T) &gt; buffer.size()) {
+    return std::unexpected(PacketError::Truncated);
+  }
+
+  std::array&lt;std::byte, sizeof(T)&gt; raw{};
+  std::copy_n(buffer.begin() + static_cast&lt;std::ptrdiff_t&gt;(offset), sizeof(T),
+              raw.begin());
+  offset += sizeof(T);
+  return fromBigEndian(std::bit_cast&lt;T&gt;(raw));
+}
+</code></pre>
+<p>Callers pass a buffer and an offset by reference; the function writes the bytes and bumps the offset. No raw <code>char*</code> required.</p>
+<blockquote>
+<p><strong>Concept note:</strong> <code>std::bit_cast</code> is the safe, constexpr alternative to <code>reinterpret_cast</code>. We bit-cast the integral into a byte array, copy the bytes, and let the compiler optimise away any temporaries.</p>
+<p><strong>Why two APIs?</strong> The free functions keep header encoding simple, while <code>PayloadReader</code> manages its own offset when parsing payloads. Both rely on the same underlying idioms.</p>
+</blockquote>
+<h3 id="33-encoding-the-packet-header">3.3 Encoding the packet header</h3>
+<p>Every packet starts with a header describing version, type, and payload size. Add this struct and encoder:</p>
+<pre><code class="language-cpp">struct PacketHeader {
+  std::uint16_t version{protocolVersion};
+  PacketType type{PacketType::Movement};
+  std::uint32_t payloadSize{};
+};
+
+[[nodiscard]] inline auto encodeHeader(PacketHeader header) noexcept
+    -&gt; std::array&lt;std::byte, packetHeaderSize&gt; {
+  std::array&lt;std::byte, packetHeaderSize&gt; buffer{};
+  std::size_t offset = 0;
+  writeIntegral(buffer, offset, header.version);
+  writeIntegral(buffer, offset, static_cast&lt;std::uint16_t&gt;(header.type));
+  writeIntegral(buffer, offset, header.payloadSize);
+  return buffer;
+}
+</code></pre>
+<h3 id="34-payload-writer-utility">3.4 Payload writer utility</h3>
+<p>For packet payloads we often need to append bytes dynamically. A small helper class that wraps <code>std::vector&lt;std::byte&gt;</code> keeps the code neat.</p>
+<pre><code class="language-cpp">class PayloadWriter {
+public:
+  template &lt;std::integral T&gt; void write(T value) {
+    auto networkOrder = toBigEndian(value);
+    auto bytes = std::bit_cast&lt;std::array&lt;std::byte, sizeof(T)&gt;&gt;(networkOrder);
+    m_buffer.insert(m_buffer.end(), bytes.begin(), bytes.end());
+  }
+
+  void writeByte(std::uint8_t value) {
+    m_buffer.push_back(static_cast&lt;std::byte&gt;(value));
+  }
+
+  [[nodiscard]] auto bytes() const noexcept -&gt; std::span&lt;const std::byte&gt; {
+    return m_buffer;
+  }
+
+  [[nodiscard]] auto release() &amp;&amp; -&gt; std::vector&lt;std::byte&gt; {
+    return std::move(m_buffer);
+  }
+
+private:
+  std::vector&lt;std::byte&gt; m_buffer;
+};
+</code></pre>
+<p>🧠 <strong>Concept note</strong>: <code>std::bit_cast</code> gives us a safe, constexpr way to treat bytes as another trivially copyable type. It replaces old <code>reinterpret_cast</code> hacks with defined behaviour.</p>
+<p>Notice that <code>release()</code> is an rvalue-qualified member; it returns the vector by move only when called on a temporary (<code>std::move(writer).release()</code>). This expresses ownership transfer clearly.</p>
+<blockquote>
+<p><strong>Concept note:</strong> Move semantics let us transfer ownership without copying. After <code>std::move(writer)</code>, the writer keeps a valid but unspecified state while the caller takes over the buffer—much like handing off a Go slice’s backing array instead of cloning it.</p>
+</blockquote>
+<h3 id="35-putting-it-together-encode-a-movement-command">3.5 Putting it together: encode a movement command</h3>
+<p>Add this function to the header:</p>
+<pre><code class="language-cpp">[[nodiscard]] inline auto encodePayload(const MovementPacket&amp; packet)
+    -&gt; std::vector&lt;std::byte&gt; {
+  PayloadWriter writer;
+  writer.write(packet.player);
+  writer.writeByte(static_cast&lt;std::uint8_t&gt;(packet.direction));
+  return std::move(writer).release();
+}
+
+[[nodiscard]] inline auto encode(const MovementPacket&amp; packet)
+    -&gt; std::vector&lt;std::byte&gt; {
+  auto payload = encodePayload(packet);
+  PacketHeader header{.type = PacketType::Movement,
+                      .payloadSize =
+                          static_cast&lt;std::uint32_t&gt;(payload.size())};
+  auto headerBytes = encodeHeader(header);
+
+  std::vector&lt;std::byte&gt; buffer;
+  buffer.reserve(packetHeaderSize + payload.size());
+  buffer.insert(buffer.end(), headerBytes.begin(), headerBytes.end());
+  buffer.insert(buffer.end(), payload.begin(), payload.end());
+  return buffer;
+}
+</code></pre>
+<p>We reserve capacity up front, append header then payload, and return a single buffer ready for sending over the socket.</p>
+<p>🛠️ <strong>Checkpoint:</strong> rebuild <code>moonlapse_shared</code> now. The target should compile without warnings. If you see template errors, they usually point to a missing include or a typo in the helper signatures.</p>
+<p>🔁 <strong>Round-trip demo:</strong> drop the snippet below into a scratch file (or a doctest case) to verify encoder/decoder symmetry.</p>
+<pre><code class="language-cpp">const Protocol::MovementPacket original{
+  .player = 42,
+  .direction = Protocol::Direction::Down};
+auto encoded = Protocol::encode(original);
+auto header = Protocol::decodeHeader(std::span&lt;const std::byte&gt;{encoded});
+assert(header);
+auto payloadSpan =
+  std::span&lt;const std::byte&gt;{encoded}.subspan(Protocol::packetHeaderSize);
+auto decoded = Protocol::decodePacket(*header, payloadSpan);
+assert(decoded);
+auto* movement = std::get_if&lt;Protocol::MovementPacket&gt;(&amp;decoded.value());
+assert(movement != nullptr);
+assert(movement-&gt;player == original.player);
+assert(movement-&gt;direction == original.direction);
+</code></pre>
+<hr />
+<h2 id="4-decoding-with-safety-guarantees">4. Decoding with safety guarantees</h2>
+<p>Decoding is mirror work, but we must guard against truncated payloads or invalid data. This is where <code>std::expected</code> shines.</p>
+<h3 id="41-packet-errors">4.1 Packet errors</h3>
+<p>Define an enum for failure modes and a handy alias for <code>std::expected</code>:</p>
+<pre><code class="language-cpp">enum class PacketError : std::uint8_t {
+  VersionMismatch,
+  UnknownType,
+  Truncated,
+  SizeMismatch,
+  InvalidPayload,
+};
+
+template &lt;typename T&gt; using PacketResult = std::expected&lt;T, PacketError&gt;;
+
+Unlike `std::optional`, `std::expected` carries a strongly typed error. Callers can inspect `.error()` for the precise reason, keeping control flow explicit without exceptions.
+</code></pre>
+<h3 id="42-reading-integrals-with-bounds-checking">4.2 Reading integrals with bounds checking</h3>
+<p>Create a small reader that tracks offsets and returns <code>std::expected</code> when data runs out:</p>
+<pre><code class="language-cpp">class PayloadReader {
+public:
+  explicit PayloadReader(std::span&lt;const std::byte&gt; data) noexcept
+      : m_payload{data} {}
+
+  template &lt;std::integral T&gt; auto read() -&gt; PacketResult&lt;T&gt; {
+    if (m_offset + sizeof(T) &gt; m_payload.size()) {
+      return std::unexpected(PacketError::Truncated);
+    }
+
+    std::array&lt;std::byte, sizeof(T)&gt; raw{};
+    std::copy_n(m_payload.begin() + static_cast&lt;std::ptrdiff_t&gt;(m_offset),
+                sizeof(T), raw.begin());
+    m_offset += sizeof(T);
+    return fromBigEndian(std::bit_cast&lt;T&gt;(raw));
+  }
+
+  auto readByte() -&gt; PacketResult&lt;std::uint8_t&gt; { return read&lt;std::uint8_t&gt;(); }
+
+  [[nodiscard]] auto remaining() const noexcept -&gt; std::size_t {
+    return m_payload.size() - m_offset;
+  }
+
+private:
+  std::span&lt;const std::byte&gt; m_payload;
+  std::size_t m_offset{};
+};
+</code></pre>
+<p>No raw pointers, no undefined behaviour: either we return a successfully decoded value or we surface an error.</p>
+<h3 id="43-header-decoding">4.3 Header decoding</h3>
+<p>Reassemble the header carefully. Callers must check the error condition before using the result.</p>
+<pre><code class="language-cpp">[[nodiscard]] inline auto decodeHeader(std::span&lt;const std::byte&gt; buffer)
+    -&gt; PacketResult&lt;PacketHeader&gt; {
+  if (buffer.size() &lt; packetHeaderSize) {
+    return std::unexpected(PacketError::Truncated);
+  }
+
+  std::size_t offset = 0;
+  auto version = readIntegral&lt;std::uint16_t&gt;(buffer, offset);
+  if (!version) {
+    return std::unexpected(version.error());
+  }
+
+  auto typeValue = readIntegral&lt;std::uint16_t&gt;(buffer, offset);
+  if (!typeValue) {
+    return std::unexpected(typeValue.error());
+  }
+
+  auto payloadSize = readIntegral&lt;std::uint32_t&gt;(buffer, offset);
+  if (!payloadSize) {
+    return std::unexpected(payloadSize.error());
+  }
+
+  if (*version != protocolVersion) {
+    return std::unexpected(PacketError::VersionMismatch);
+  }
+
+  auto decodedType = static_cast&lt;PacketType&gt;(*typeValue);
+  switch (decodedType) {
+  case PacketType::Movement:
+  case PacketType::StateSnapshot:
+    break;
+  default:
+    return std::unexpected(PacketError::UnknownType);
+  }
+
+  return PacketHeader{
+      .version = *version, .type = decodedType, .payloadSize = *payloadSize};
+}
+</code></pre>
+<blockquote>
+<p><code>readIntegral</code> here is a convenience wrapper identical in spirit to the <code>PayloadReader</code> implementation. You can either reuse the reader class or keep separate free functions—the key point is that each conversion is bounds-checked and returns <code>std::expected</code>.</p>
+<p><strong>Pattern reminder:</strong> checking <code>if (!result)</code> is the C++ analogue of Go’s <code>if err != nil</code>. Use <code>return std::unexpected(result.error());</code> to propagate the failure immediately.</p>
+</blockquote>
+<h3 id="44-decoding-a-movement-payload">4.4 Decoding a movement payload</h3>
+<p>We validate each field and guard against unknown directions.</p>
+<pre><code class="language-cpp">[[nodiscard]] inline auto decodeMovement(std::span&lt;const std::byte&gt; payload)
+    -&gt; PacketResult&lt;MovementPacket&gt; {
+  PayloadReader reader{payload};
+  auto playerId = reader.read&lt;PlayerId&gt;();
+  if (!playerId) {
+    return std::unexpected(playerId.error());
+  }
+
+  auto directionRaw = reader.readByte();
+  if (!directionRaw) {
+    return std::unexpected(directionRaw.error());
+  }
+
+  auto directionValue = *directionRaw;
+  if (directionValue &gt; static_cast&lt;std::uint8_t&gt;(Direction::Right)) {
+    return std::unexpected(PacketError::InvalidPayload);
+  }
+
+  if (reader.remaining() != 0) {
+    return std::unexpected(PacketError::SizeMismatch);
+  }
+
+  return MovementPacket{.player = *playerId,
+                        .direction = static_cast&lt;Direction&gt;(directionValue)};
+}
+</code></pre>
+<h3 id="45-stitching-decoded-variants">4.5 Stitching decoded variants</h3>
+<p>As the protocol grows, we will hold different packet structs inside a <code>std::variant</code>. For now it holds a single type, but wiring it up early keeps the interface stable.</p>
+<pre><code class="language-cpp">using PacketVariant = std::variant&lt;MovementPacket&gt;;
+
+[[nodiscard]] inline auto decodePacket(const PacketHeader&amp; header,
+                                       std::span&lt;const std::byte&gt; payload)
+    -&gt; PacketResult&lt;PacketVariant&gt; {
+  if (payload.size() != header.payloadSize) {
+    return std::unexpected(PacketError::SizeMismatch);
+  }
+
+  switch (header.type) {
+  case PacketType::Movement: {
+    auto packet = decodeMovement(payload);
+    if (!packet) {
+      return std::unexpected(packet.error());
+    }
+    return PacketVariant{*packet};
+  }
+  default:
+    return std::unexpected(PacketError::UnknownType);
+  }
+}
+</code></pre>
+<p>When the enum gains additional entries, we expand both the variant and the switch statement. Exhaustive handling makes it impossible to “forget” a new packet type in one code path.</p>
+<blockquote>
+<p><strong>Concept note:</strong> <code>std::variant</code> behaves like a Rust <code>enum</code> with data—it stores exactly one alternative. <code>std::visit</code> forces you to handle every case, so the compiler catches missing packet handlers.</p>
+</blockquote>
+<p>🧠 <strong>Concept note</strong>: <code>std::variant</code> is a type-safe tagged union. Combined with <code>std::visit</code>, it enforces exhaustive handling at compile time.</p>
+<hr />
+<h2 id="5-testing-the-shared-module-in-isolation">5. Testing the shared module in isolation</h2>
+<p>Because <code>moonlapse_shared</code> is a static library with no outside dependencies, you can build and test it without touching the client or server. Two recommendations:</p>
+<ol>
+<li><strong>Use <code>cmake --build build --target moonlapse_shared</code></strong> during early development. This gives fast feedback whenever you change protocol code.</li>
+<li><strong>Add a simple executable under <code>shared/tests/</code></strong> driven by Catch2, doctest, or the testing framework of your choice. Point the new test target at <code>moonlapse_shared</code> to exercise encoding/decoding round-trips and edge cases.</li>
+</ol>
+<p>Example <code>CMakeLists.txt</code> snippet for a doctest-based test:</p>
+<pre><code class="language-cmake">add_executable(shared_protocol_tests
+  tests/protocol_roundtrip.cpp
+)
+
+target_link_libraries(shared_protocol_tests PRIVATE moonlapse_shared)
+</code></pre>
+<p>Then run:</p>
+<pre><code class="language-bash">cmake --build build --target shared_protocol_tests
+ctest --tests-regex shared_protocol
+</code></pre>
+<p>Even if you postpone formal tests for later, the standalone build target means you can iterate on <code>shared/</code> logic quickly with a single command. Great early tests include truncated headers, oversized payload declarations, and invalid direction codes to exercise each error branch.</p>
+<p>🏁 <strong>Example doctest case</strong></p>
+<pre><code class="language-cpp">#include &lt;doctest/doctest.h&gt;
+#include &quot;packets.hpp&quot;
+
+TEST_CASE(&quot;movement packet round-trip&quot;) {
+  using Protocol::Direction;
+  using Protocol::MovementPacket;
+
+  const MovementPacket original{.player = 7, .direction = Direction::Left};
+  auto encoded = Protocol::encode(original);
+  auto header = Protocol::decodeHeader(std::span&lt;const std::byte&gt;{encoded});
+  REQUIRE(header);
+  auto payloadSpan =
+      std::span&lt;const std::byte&gt;{encoded}.subspan(Protocol::packetHeaderSize);
+  auto decoded = Protocol::decodePacket(*header, payloadSpan);
+  REQUIRE(decoded);
+  REQUIRE(std::holds_alternative&lt;MovementPacket&gt;(decoded.value()));
+  const auto&amp; restored = std::get&lt;MovementPacket&gt;(decoded.value());
+  CHECK(restored.player == original.player);
+  CHECK(restored.direction == original.direction);
+}
+</code></pre>
+<p>Compile this under <code>shared/tests/</code> and you have executable assurance that the helpers behave.</p>
+<hr />
+<h2 id="6-checklist">6. Checklist</h2>
+<ul>
+<li>[x] <code>shared/CMakeLists.txt</code> defines a C++23 static library with clean include semantics.</li>
+<li>[x] Strongly typed enums describe packet types and directions.</li>
+<li>[x] Packet header encoding uses <code>std::byte</code> buffers and network byte order helpers.</li>
+<li>[x] <code>PayloadWriter</code> and <code>PayloadReader</code> encapsulate serialization without raw pointers.</li>
+<li>[x] <code>std::expected</code> communicates errors explicitly when decoding fails.</li>
+<li>[x] A <code>std::variant</code> keeps packet handling extensible.</li>
+</ul>
+<p>At this point, both client and server can include <code>packets.hpp</code>, encode movement commands, and decode them safely.</p>
+<hr />
+<h2 id="whats-next-02">What’s next (§02)</h2>
+<p>In the next chapter we will layer networking primitives on top of the protocol. §02 introduces the cross-platform socket wrapper, showcases RAII for system handles, and demonstrates how to integrate <code>std::expected</code>-style error reporting with blocking/non-blocking I/O. By the end of §02 you will be able to connect the client to the server and swap packets through the shared protocol you just built.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>
